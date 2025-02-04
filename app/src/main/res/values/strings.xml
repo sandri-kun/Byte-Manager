@@ -1,0 +1,181 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="AppName">IPTV DRM Stream Player</string>
+    <string name="AppNameBeta">DRM Stream Player</string>
+    <string name="LanguageName">English</string>
+    <string name="English">English</string>
+    <string name="LanguageNameInEnglish">English</string>
+    <string name="LanguageCode">en</string>
+    <string name="ContinueOnThisLanguage">Continue in English</string>
+    <string name="DefaultUserAgent" translatable="false">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36</string>
+    <string name="ActivityPlayer" translatable="false">VIDEO PLAYER</string>
+    <string name="ActivityPlaylist" translatable="false">PLAYLIST M3U</string>s
+
+    <string name="load_more_text">More</string>
+    <string name="Done">Done</string>
+    <string name="Open">Open</string>
+    <string name="Save">Save</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Close">Close</string>
+    <string name="Change">Change</string>
+    <string name="Add">Add</string>
+    <string name="Edit">Edit</string>
+    <string name="Send">Send</string>
+    <string name="Call">Call</string>
+    <string name="VideoCall">Video Call</string>
+    <string name="Copy">Copy</string>
+    <string name="Delete">Delete</string>
+    <string name="Start">Start</string>
+    <string name="DeleteAndStop">Delete and Stop</string>
+    <string name="Forward">Forward</string>
+    <string name="Retry">Retry</string>
+    <string name="FromCamera">From Camera</string>
+    <string name="DeletePhoto">Remove Photo</string>
+    <string name="Set">Set</string>
+    <string name="OK">OK</string>
+    <string name="Stop">Stop</string>
+    <string name="WaitMore">Wait More</string>
+    <string name="Continue">Continue</string>
+    <string name="CreateLink">Create Link</string>
+    <string name="Crop">Crop</string>
+    <string name="UpdateApp">Update App</string>
+    <string name="UpdateNow">Update Now</string>
+    <string name="Update">Update</string>
+    <string name="Later">Later</string>
+    <string name="Accept">Accept</string>
+    <string name="Agree">Agree</string>
+    <string name="Decline">Decline</string>
+    <string name="Deactivate">Delete Now</string>
+    <string name="Back">Back</string>
+    <string name="SignUp">Sign Up</string>
+    <string name="DeclineDeactivate">Decline&amp;Delete</string>
+    <string name="Next">Next</string>
+    <string name="Enable">Enable</string>
+    <string name="Other">See All</string>
+    <string name="LoginOrSingInWithGoogle">or</string>
+    <string name="Abort">Abort</string>
+    <string name="Disable">Disable</string>
+    <string name="DeleteAll">Delete All</string>
+    <string name="StopLoading">Stop loading?</string>
+    <string name="ShareLink">Share Link</string>
+    <string name="CopyLink">Copy Link</string>
+    <string name="ShareFile">Share</string>
+    <string name="Loading">Loading…</string>
+    <string name="StopLoadingTitle">Stop loading?</string>
+    <string name="FloodWait">Too many attempts, please try again later</string>
+    <string name="FloodWaitTime">Too many attempts, please try again in %1$s</string>
+    <string name="TosAgeTitle">Age Verification</string>
+    <string name="PrivacyPolicyAndTerms">Privacy Policy and Terms of Service</string>
+
+    <string name="Minutes_other">%1$d minutes</string>
+    <string name="Hours_zero">%1$d hours</string>
+    <string name="Hours_one">%1$d hour</string>
+    <string name="formatDateAtTime">%1$s at %2$s</string>
+
+    <string name="Copyright" translatable="false">Copyright by IndoVerseID.</string>
+    <string name="TermsOfService" translatable="false">Term of Service</string>
+    <string name="TermsOfServiceValue" translatable="false">This is Terms of Service. By using our service, you agree to the Terms of Service and Privacy Policy.</string>
+    <string name="formatterMonthYear" translatable="false">MMM yyyy</string>
+    <string name="formatterStats12H" translatable="false">MMM dd yyyy, h:mm a</string>
+    <string name="formatterStats24H" translatable="false">MMM dd yyyy, HH:mm</string>
+
+    <string name="formatDateSchedule" translatable="false">MMM d</string>
+    <string name="formatDateScheduleYear" translatable="false">MMM d yyyy</string>
+    <string name="formatterYearMax" translatable="false">dd.MM.yyyy</string>
+    <string name="formatterMonth" translatable="false">MMM dd</string>
+    <string name="formatterYear" translatable="false">dd.MM.yy</string>
+    <string name="chatDate" translatable="false">MMMM d</string>
+    <string name="chatFullDate" translatable="false">MMMM d, yyyy</string>
+    <string name="formatterWeek" translatable="false">EEE</string>
+    <string name="formatterWeekLong" translatable="false">EEEE</string>
+    <string name="formatterDay24H" translatable="false">HH:mm</string>
+    <string name="formatterDay12H" translatable="false">h:mm a</string>
+    <string name="SecretChatTimerDays" translatable="false">d</string>
+    <string name="SecretChatTimerMonths" translatable="false">m</string>
+    <string name="SecretChatTimerSeconds" translatable="false">s</string>
+    <string name="SecretChatTimerMinutes" translatable="false">m</string>
+    <string name="SecretChatTimerHours" translatable="false">h</string>
+    <string name="SecretChatTimerWeeks" translatable="false">w</string>
+    <string name="SecretChatTimerYears" translatable="false">y</string>
+
+    <string name="PermissionDialogTitle">Permission Required</string>
+    <string name="PermissionDialogMessage">This app requires permission to access media.</string>
+    <string name="OpenSettings">Open Settings</string>
+    <string name="PermissionGrantedMediaVideo">Permission granted: media video</string>
+    <string name="PermissionDeniedMediaVideo">Permission denied: media video</string>
+    <string name="PermissionGrantedExternalStorage">Permission granted: external storage</string>
+    <string name="PermissionDeniedExternalStorage">Permission denied: external storage</string>
+    <string name="ActionSearch">Search</string>
+    <string name="ActionMore">More</string>
+    <string name="SortDateNewest">Sort by Date (Newest)</string>
+    <string name="SortDateOldest">Sort by Date (Oldest)</string>
+    <string name="SortSizeAscending">Sort by Size (Ascending)</string>
+    <string name="SortSizeDescending">Sort by Size (Descending)</string>
+    <string name="SortNameAscending">Sort by Name (A-Z)</string>
+    <string name="SortNameDescending">Sort by Name (Z-A)</string>
+    <string name="SortDurationAscending">Sort by Duration (Shortest)</string>
+    <string name="SortDurationDescending">Sort by Duration (Longest)</string>
+
+    <string name="ActionFile">File</string>
+    <string name="ActionSaveAs">Save As</string>
+    <string name="ActionRefresh">Reload File</string>
+    <string name="ActionStatistics">Statistics</string>
+    <string name="ActionSelectAll">Select All</string>
+    <string name="ActionDeleteAll">Delete All</string>
+    <string name="ActionJumpUpLine">Jump Up</string>
+    <string name="ActionJumpEndLine">Jump to End</string>
+    <string name="ActionPreference">Preferences</string>
+    <string name="ActionExit">Exit</string>
+    <string name="ActionImportFile">Import File</string>
+
+    <string name="PermissionStorage">This app requires permission to access your videos</string>
+    <string name="PermissionStorageButton">Grant Permission</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_share">Share</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_statistic">Info</string>
+
+    <!--accessibility descriptions-->
+    <string name="AccDescrOpenMenu2">Open Menu</string>
+    <string name="AccDescrCloseMenu">Close Menu</string>
+    <string name="AccActionPlay">Play</string>
+    <string name="AccActionPause">Pause</string>
+    <string name="AccActionResume">Resume</string>
+    <string name="AccActionOpenFile">Open File</string>
+    <string name="AccDescrRotate">Rotate</string>
+    <string name="AccDescrPipMode">Picture-in-Picture Mode</string>
+    <string name="AccDescrVideoQuality">Video Quality</string>
+    <string name="AccDescrMoreOptions">More Options</string>
+    <string name="AccDescrGoBack">Go Back</string>
+    <string name="AccDescrDrmScheme">DRM Scheme</string>
+    <string name="AccDescrJoinOurGroup">Join Our Group</string>
+    <string name="AccDescrSettings">Settings</string>
+    <string name="Telegram">Telegram</string>
+    <string name="AccDescrItemList">Item List</string>
+    <string name="AccDescrBookmark">Bookmark</string>
+    <string name="AccDescrListView">List View</string>
+    <string name="AccDescrPlaceHolder">Placeholder</string>
+
+    <string name="Version">Version</string>
+    <string name="System">System</string>
+    <string name="SystemTheme">System Theme</string>
+    <string name="SystemThemeSummary">Follow system theme settings</string>
+    <string name="Light">Light</string>
+    <string name="Dark">Dark</string>
+    <string name="Disagree">Disagree</string>
+    <string name="SideNoteText">Thank you for being a beta tester.</string>
+    <string name="GetStarted">GET STARTED</string>
+    <string name="Help">Help</string>
+
+    <string name="AccDescrFabAddFileText">Title for adding a file</string>
+    <string name="AccDescrFabAddFile">Add a file</string>
+    <string name="AccDescrFabAddLinkPlaylistTitle">Title for adding a playlist link</string>
+    <string name="AccDescrFabAddLinkPlaylist">Add a playlist link</string>
+    <string name="AccDescrFabAddVideoLinkTitle">Title for adding a video link</string>
+    <string name="AccDescrFabAddVideoLink">Add a video link</string>
+
+    <string name="pref_decoder_priority_prefer_device">Prefer Device</string>
+    <string name="pref_decoder_priority_prefer_app">Prefer App</string>
+    <string name="pref_decoder_priority_only_device">Only Device</string>
+    <string name="pref_file_access_auto">Auto File Access</string>
+
+</resources>

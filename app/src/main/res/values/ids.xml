@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <id name="track_selection_dialog_tab_layout"/>
+    <id name="track_selection_dialog_view_pager"/>
+    <id name="track_selection_dialog_cancel_button"/>
+    <id name="track_selection_dialog_ok_button"/>
+
+    <id name="exo_error_message"/>
+    <id name="exo_play_pause"/>
+    <id name="exo_settings"/>
+    <id name="exo_controller"/>
+    <id name="exo_fullscreen"/>
+    <id name="exo_buffering"/>
+    <id name="exo_basic_controls"/>
+    <id name="exo_bottom_bar"/>
+
+    <item name="object_tag" type="id"/>
+    <item name="width_tag" type="id"/>
+    <item name="fit_width_tag" type="id"/>
+
+    <!--  customization on the passcode screen  -->
+    <item name="content" type="id"/>
+    <item name="container" type="id"/>
+    <item name="child" type="id"/>
+    <item name="viewGroup" type="id"/>
+    <item name="nestedScrollView" type="id"/>
+    <item name="recyclerView" type="id"/>
+    <item name="viewPager" type="id"/>
+    <item name="menu_spoiler" type="id"/>
+    <item name="menu_regular" type="id"/>
+    <item name="menu_bold" type="id"/>
+    <item name="menu_italic" type="id"/>
+    <item name="menu_link" type="id"/>
+    <item name="menu_mono" type="id"/>
+    <item name="menu_strike" type="id"/>
+    <item name="menu_underline" type="id"/>
+    <item name="menu_groupbolditalic" type="id"/>
+    <item name="parent_tag" type="id"/>
+</resources>

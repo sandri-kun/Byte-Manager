@@ -1,0 +1,55 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	<LinearLayout
+		android:id="@+id/linear1"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingLeft="12dp"
+		android:paddingRight="12dp"
+		android:gravity="center_horizontal|center_vertical"
+		android:orientation="horizontal">
+		<ImageView
+			android:id="@+id/imageView"
+			android:focusable="false"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+			android:padding="6dp"
+			android:src="@drawable/sd_card_24dp"
+			android:scaleType="fitCenter" />
+		<LinearLayout
+			android:id="@+id/linear2"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="8dp"
+			android:orientation="vertical">
+			<TextView
+				android:id="@+id/textView"
+				android:focusable="false"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="2dp"
+				android:text="Direktori Akar"
+				android:textSize="16sp"
+				android:textColor="#000000" />
+			<org.bytedata.manager.ui.components.NumberProgressBar
+				android:id="@+id/progressView"
+				android:focusable="false"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+			<TextView
+				android:id="@+id/subtitleView"
+				android:focusable="false"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="2dp"
+				android:text="100Gb tersedia"
+				android:textSize="11sp"
+				android:textColor="#000000" />
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>
