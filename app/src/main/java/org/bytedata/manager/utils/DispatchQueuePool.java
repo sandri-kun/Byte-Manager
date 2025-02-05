@@ -13,8 +13,8 @@ public class DispatchQueuePool {
     private final SparseIntArray busyQueuesMap = new SparseIntArray();
     private final LinkedList<DispatchQueue> busyQueues = new LinkedList<>();
     private final int maxCount;
-    private int createdCount;
     private final int guid;
+    private int createdCount;
     private int totalTasksCount;
     private boolean cleanupScheduled;
 

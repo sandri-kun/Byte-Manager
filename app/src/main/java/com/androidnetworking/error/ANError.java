@@ -74,20 +74,20 @@ public class ANError extends Exception {
         return response;
     }
 
-    public void setErrorDetail(String errorDetail) {
-        this.errorDetail = errorDetail;
-    }
-
     public String getErrorDetail() {
         return this.errorDetail;
     }
 
-    public void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
+    public void setErrorDetail(String errorDetail) {
+        this.errorDetail = errorDetail;
     }
 
     public int getErrorCode() {
         return this.errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
     }
 
     public void setCancellationMessageInError() {

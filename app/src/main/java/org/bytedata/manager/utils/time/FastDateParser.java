@@ -59,26 +59,80 @@ import java.util.regex.Pattern;
  * @since 3.2
  */
 public class FastDateParser implements DateParser, Serializable {
+    static final Locale JAPANESE_IMPERIAL = new Locale("ja", "JP", "JP");
     /**
      * Required for serialization support.
      *
      * @see Serializable
      */
     private static final long serialVersionUID = 2L;
+    /**
+     * A <code>Pattern</code> to parse the user supplied SimpleDateFormat pattern
+     */
+    private static final Pattern formatPattern = Pattern.compile(
+            "D+|E+|F+|G+|H+|K+|M+|L+|S+|W+|Z+|a+|d+|h+|k+|m+|s+|w+|y+|z+|''|'[^']++(''[^']*+)*+'|[^'A-Za-z]++");
+    @SuppressWarnings("unchecked") // OK because we are creating an array with no entries
+    private static final ConcurrentMap<Locale, Strategy>[] caches = new ConcurrentMap[Calendar.FIELD_COUNT];
+    private static final Strategy ABBREVIATED_YEAR_STRATEGY = new NumberStrategy(Calendar.YEAR) {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        void setCalendar(final FastDateParser parser, final Calendar cal, final String value) {
+            int iValue = Integer.parseInt(value);
+            if (iValue < 100) {
+                iValue = parser.adjustYear(iValue);
+            }
+            cal.set(Calendar.YEAR, iValue);
+        }
+    };
+    private static final Strategy NUMBER_MONTH_STRATEGY = new NumberStrategy(Calendar.MONTH) {
+        @Override
+        int modify(final int iValue) {
+            return iValue - 1;
+        }
+    };
+    private static final Strategy LITERAL_YEAR_STRATEGY = new NumberStrategy(Calendar.YEAR);
+    private static final Strategy WEEK_OF_YEAR_STRATEGY = new NumberStrategy(Calendar.WEEK_OF_YEAR);
+    private static final Strategy WEEK_OF_MONTH_STRATEGY = new NumberStrategy(Calendar.WEEK_OF_MONTH);
+    private static final Strategy DAY_OF_YEAR_STRATEGY = new NumberStrategy(Calendar.DAY_OF_YEAR);
+    private static final Strategy DAY_OF_MONTH_STRATEGY = new NumberStrategy(Calendar.DAY_OF_MONTH);
+    private static final Strategy DAY_OF_WEEK_IN_MONTH_STRATEGY = new NumberStrategy(Calendar.DAY_OF_WEEK_IN_MONTH);
+    private static final Strategy HOUR_OF_DAY_STRATEGY = new NumberStrategy(Calendar.HOUR_OF_DAY);
+    private static final Strategy MODULO_HOUR_OF_DAY_STRATEGY = new NumberStrategy(Calendar.HOUR_OF_DAY) {
+        @Override
+        int modify(final int iValue) {
+            return iValue % 24;
+        }
+    };
+    private static final Strategy MODULO_HOUR_STRATEGY = new NumberStrategy(Calendar.HOUR) {
+        @Override
+        int modify(final int iValue) {
+            return iValue % 12;
+        }
+    };
+    private static final Strategy HOUR_STRATEGY = new NumberStrategy(Calendar.HOUR);
+    private static final Strategy MINUTE_STRATEGY = new NumberStrategy(Calendar.MINUTE);
+    private static final Strategy SECOND_STRATEGY = new NumberStrategy(Calendar.SECOND);
 
-    static final Locale JAPANESE_IMPERIAL = new Locale("ja", "JP", "JP");
-
+    // Basics
+    //-----------------------------------------------------------------------
+    private static final Strategy MILLISECOND_STRATEGY = new NumberStrategy(Calendar.MILLISECOND);
     // defining fields
     private final String pattern;
     private final TimeZone timeZone;
+
+    // Serializing
+    //-----------------------------------------------------------------------
     private final Locale locale;
     private final int century;
     private final int startYear;
-
     // derived fields
     private transient Pattern parsePattern;
     private transient Strategy[] strategies;
 
+    // Support for strategies
+    //-----------------------------------------------------------------------
     // dynamic fields to communicate with Strategy
     private transient String currentFormatField;
     private transient Strategy nextStrategy;
@@ -126,6 +180,114 @@ public class FastDateParser implements DateParser, Serializable {
         startYear = centuryStartYear - century;
 
         init(definingCalendar);
+    }
+
+    /**
+     * Escape constant fields into regular expression
+     *
+     * @param regex   The destination regex
+     * @param value   The source field
+     * @param unquote If true, replace two success quotes ('') with single quote (')
+     * @return The <code>StringBuilder</code>
+     */
+    private static StringBuilder escapeRegex(final StringBuilder regex, final String value, final boolean unquote) {
+        regex.append("\\Q");
+        for (int i = 0; i < value.length(); ++i) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '\'':
+                    if (unquote) {
+                        if (++i == value.length()) {
+                            return regex;
+                        }
+                        c = value.charAt(i);
+                    }
+                    break;
+                case '\\':
+                    if (++i == value.length()) {
+                        break;
+                    }
+                    /*
+                     * If we have found \E, we replace it with \E\\E\Q, i.e. we stop the quoting,
+                     * quote the \ in \E, then restart the quoting.
+                     *
+                     * Otherwise we just output the two characters.
+                     * In each case the initial \ needs to be output and the final char is done at the end
+                     */
+                    regex.append(c); // we always want the original \
+                    c = value.charAt(i); // Is it followed by E ?
+                    if (c == 'E') { // \E detected
+                        regex.append("E\\\\E\\"); // see comment above
+                        c = 'Q'; // appended below
+                    }
+                    break;
+                default:
+                    break;
+            }
+            regex.append(c);
+        }
+        regex.append("\\E");
+        return regex;
+    }
+
+    private static String[] getDisplayNameArray(int field, boolean isLong, Locale locale) {
+        DateFormatSymbols dfs = new DateFormatSymbols(locale);
+        switch (field) {
+            case Calendar.AM_PM:
+                return dfs.getAmPmStrings();
+            case Calendar.DAY_OF_WEEK:
+                return isLong ? dfs.getWeekdays() : dfs.getShortWeekdays();
+            case Calendar.ERA:
+                return dfs.getEras();
+            case Calendar.MONTH:
+                return isLong ? dfs.getMonths() : dfs.getShortMonths();
+        }
+        return null;
+    }
+
+    private static void insertValuesInMap(Map<String, Integer> map, String[] values) {
+        if (values == null) {
+            return;
+        }
+        for (int i = 0; i < values.length; ++i) {
+            if (values[i] != null && values[i].length() > 0) {
+                map.put(values[i], i);
+            }
+        }
+    }
+
+    private static Map<String, Integer> getDisplayNames(int field, Locale locale) {
+        Map<String, Integer> result = new HashMap<String, Integer>();
+        insertValuesInMap(result, getDisplayNameArray(field, false, locale));
+        insertValuesInMap(result, getDisplayNameArray(field, true, locale));
+        return result.isEmpty() ? null : result;
+    }
+
+    /**
+     * Get the short and long values displayed for a field
+     *
+     * @param field            The field of interest
+     * @param definingCalendar The calendar to obtain the short and long values
+     * @param locale           The locale of display names
+     * @return A Map of the field key / value pairs
+     */
+    private static Map<String, Integer> getDisplayNames(final int field, final Calendar definingCalendar, final Locale locale) {
+        return getDisplayNames(field, locale);
+    }
+
+    /**
+     * Get a cache of Strategies for a particular field
+     *
+     * @param field The Calendar field
+     * @return a cache of Locale to Strategy
+     */
+    private static ConcurrentMap<Locale, Strategy> getCache(final int field) {
+        synchronized (caches) {
+            if (caches[field] == null) {
+                caches[field] = new ConcurrentHashMap<Locale, Strategy>(3);
+            }
+            return caches[field];
+        }
     }
 
     /**
@@ -207,9 +369,6 @@ public class FastDateParser implements DateParser, Serializable {
         return parsePattern;
     }
 
-    // Basics
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Compare another object for equality with this object.</p>
      *
@@ -246,9 +405,6 @@ public class FastDateParser implements DateParser, Serializable {
     public String toString() {
         return "FastDateParser[" + pattern + "," + locale + "," + timeZone.getID() + "]";
     }
-
-    // Serializing
-    //-----------------------------------------------------------------------
 
     /**
      * Create the object after serialization. This implementation reinitializes the
@@ -321,102 +477,6 @@ public class FastDateParser implements DateParser, Serializable {
         return cal.getTime();
     }
 
-    // Support for strategies
-    //-----------------------------------------------------------------------
-
-    /**
-     * Escape constant fields into regular expression
-     *
-     * @param regex   The destination regex
-     * @param value   The source field
-     * @param unquote If true, replace two success quotes ('') with single quote (')
-     * @return The <code>StringBuilder</code>
-     */
-    private static StringBuilder escapeRegex(final StringBuilder regex, final String value, final boolean unquote) {
-        regex.append("\\Q");
-        for (int i = 0; i < value.length(); ++i) {
-            char c = value.charAt(i);
-            switch (c) {
-                case '\'':
-                    if (unquote) {
-                        if (++i == value.length()) {
-                            return regex;
-                        }
-                        c = value.charAt(i);
-                    }
-                    break;
-                case '\\':
-                    if (++i == value.length()) {
-                        break;
-                    }
-                /*
-                 * If we have found \E, we replace it with \E\\E\Q, i.e. we stop the quoting,
-                 * quote the \ in \E, then restart the quoting.
-                 *
-                 * Otherwise we just output the two characters.
-                 * In each case the initial \ needs to be output and the final char is done at the end
-                 */
-                    regex.append(c); // we always want the original \
-                    c = value.charAt(i); // Is it followed by E ?
-                    if (c == 'E') { // \E detected
-                        regex.append("E\\\\E\\"); // see comment above
-                        c = 'Q'; // appended below
-                    }
-                    break;
-                default:
-                    break;
-            }
-            regex.append(c);
-        }
-        regex.append("\\E");
-        return regex;
-    }
-
-    private static String[] getDisplayNameArray(int field, boolean isLong, Locale locale) {
-        DateFormatSymbols dfs = new DateFormatSymbols(locale);
-        switch (field) {
-            case Calendar.AM_PM:
-                return dfs.getAmPmStrings();
-            case Calendar.DAY_OF_WEEK:
-                return isLong ? dfs.getWeekdays() : dfs.getShortWeekdays();
-            case Calendar.ERA:
-                return dfs.getEras();
-            case Calendar.MONTH:
-                return isLong ? dfs.getMonths() : dfs.getShortMonths();
-        }
-        return null;
-    }
-
-    private static void insertValuesInMap(Map<String, Integer> map, String[] values) {
-        if (values == null) {
-            return;
-        }
-        for (int i = 0; i < values.length; ++i) {
-            if (values[i] != null && values[i].length() > 0) {
-                map.put(values[i], i);
-            }
-        }
-    }
-
-    private static Map<String, Integer> getDisplayNames(int field, Locale locale) {
-        Map<String, Integer> result = new HashMap<String, Integer>();
-        insertValuesInMap(result, getDisplayNameArray(field, false, locale));
-        insertValuesInMap(result, getDisplayNameArray(field, true, locale));
-        return result.isEmpty() ? null : result;
-    }
-
-    /**
-     * Get the short and long values displayed for a field
-     *
-     * @param field            The field of interest
-     * @param definingCalendar The calendar to obtain the short and long values
-     * @param locale           The locale of display names
-     * @return A Map of the field key / value pairs
-     */
-    private static Map<String, Integer> getDisplayNames(final int field, final Calendar definingCalendar, final Locale locale) {
-        return getDisplayNames(field, locale);
-    }
-
     /**
      * Adjust dates to be within appropriate century
      *
@@ -445,51 +505,6 @@ public class FastDateParser implements DateParser, Serializable {
     int getFieldWidth() {
         return currentFormatField.length();
     }
-
-    /**
-     * A strategy to parse a single field from the parsing pattern
-     */
-    private static abstract class Strategy {
-        /**
-         * Is this field a number?
-         * The default implementation returns false.
-         *
-         * @return true, if field is a number
-         */
-        boolean isNumber() {
-            return false;
-        }
-
-        /**
-         * Set the Calendar with the parsed field.
-         * <p/>
-         * The default implementation does nothing.
-         *
-         * @param parser The parser calling this strategy
-         * @param cal    The <code>Calendar</code> to set
-         * @param value  The parsed field to translate and set in cal
-         */
-        void setCalendar(final FastDateParser parser, final Calendar cal, final String value) {
-
-        }
-
-        /**
-         * Generate a <code>Pattern</code> regular expression to the <code>StringBuilder</code>
-         * which will accept this field
-         *
-         * @param parser The parser calling this strategy
-         * @param regex  The <code>StringBuilder</code> to append to
-         * @return true, if this field will set the calendar;
-         * false, if this field is a constant value
-         */
-        abstract boolean addRegex(FastDateParser parser, StringBuilder regex);
-    }
-
-    /**
-     * A <code>Pattern</code> to parse the user supplied SimpleDateFormat pattern
-     */
-    private static final Pattern formatPattern = Pattern.compile(
-            "D+|E+|F+|G+|H+|K+|M+|L+|S+|W+|Z+|a+|d+|h+|k+|m+|s+|w+|y+|z+|''|'[^']++(''[^']*+)*+'|[^'A-Za-z]++");
 
     /**
      * Obtain a Strategy given a field from a SimpleDateFormat pattern
@@ -548,24 +563,6 @@ public class FastDateParser implements DateParser, Serializable {
         }
     }
 
-    @SuppressWarnings("unchecked") // OK because we are creating an array with no entries
-    private static final ConcurrentMap<Locale, Strategy>[] caches = new ConcurrentMap[Calendar.FIELD_COUNT];
-
-    /**
-     * Get a cache of Strategies for a particular field
-     *
-     * @param field The Calendar field
-     * @return a cache of Locale to Strategy
-     */
-    private static ConcurrentMap<Locale, Strategy> getCache(final int field) {
-        synchronized (caches) {
-            if (caches[field] == null) {
-                caches[field] = new ConcurrentHashMap<Locale, Strategy>(3);
-            }
-            return caches[field];
-        }
-    }
-
     /**
      * Construct a Strategy that parses a Text field
      *
@@ -586,6 +583,45 @@ public class FastDateParser implements DateParser, Serializable {
             }
         }
         return strategy;
+    }
+
+    /**
+     * A strategy to parse a single field from the parsing pattern
+     */
+    private static abstract class Strategy {
+        /**
+         * Is this field a number?
+         * The default implementation returns false.
+         *
+         * @return true, if field is a number
+         */
+        boolean isNumber() {
+            return false;
+        }
+
+        /**
+         * Set the Calendar with the parsed field.
+         * <p/>
+         * The default implementation does nothing.
+         *
+         * @param parser The parser calling this strategy
+         * @param cal    The <code>Calendar</code> to set
+         * @param value  The parsed field to translate and set in cal
+         */
+        void setCalendar(final FastDateParser parser, final Calendar cal, final String value) {
+
+        }
+
+        /**
+         * Generate a <code>Pattern</code> regular expression to the <code>StringBuilder</code>
+         * which will accept this field
+         *
+         * @param parser The parser calling this strategy
+         * @param regex  The <code>StringBuilder</code> to append to
+         * @return true, if this field will set the calendar;
+         * false, if this field is a constant value
+         */
+        abstract boolean addRegex(FastDateParser parser, StringBuilder regex);
     }
 
     /**
@@ -676,7 +712,6 @@ public class FastDateParser implements DateParser, Serializable {
         }
     }
 
-
     /**
      * A strategy that handles a number field in the parsing pattern
      */
@@ -733,27 +768,10 @@ public class FastDateParser implements DateParser, Serializable {
         }
     }
 
-    private static final Strategy ABBREVIATED_YEAR_STRATEGY = new NumberStrategy(Calendar.YEAR) {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        void setCalendar(final FastDateParser parser, final Calendar cal, final String value) {
-            int iValue = Integer.parseInt(value);
-            if (iValue < 100) {
-                iValue = parser.adjustYear(iValue);
-            }
-            cal.set(Calendar.YEAR, iValue);
-        }
-    };
-
     /**
      * A strategy that handles a timezone field in the parsing pattern
      */
     private static class TimeZoneStrategy extends Strategy {
-
-        private final String validTimeZoneChars;
-        private final SortedMap<String, TimeZone> tzNames = new TreeMap<String, TimeZone>(String.CASE_INSENSITIVE_ORDER);
 
         /**
          * Index of zone id
@@ -775,6 +793,8 @@ public class FastDateParser implements DateParser, Serializable {
          * Index of the short name of zone in daylight saving time
          */
         private static final int SHORT_DST = 4;
+        private final String validTimeZoneChars;
+        private final SortedMap<String, TimeZone> tzNames = new TreeMap<String, TimeZone>(String.CASE_INSENSITIVE_ORDER);
 
         /**
          * Construct a Strategy that parses a TimeZone
@@ -841,34 +861,4 @@ public class FastDateParser implements DateParser, Serializable {
             cal.setTimeZone(tz);
         }
     }
-
-    private static final Strategy NUMBER_MONTH_STRATEGY = new NumberStrategy(Calendar.MONTH) {
-        @Override
-        int modify(final int iValue) {
-            return iValue - 1;
-        }
-    };
-    private static final Strategy LITERAL_YEAR_STRATEGY = new NumberStrategy(Calendar.YEAR);
-    private static final Strategy WEEK_OF_YEAR_STRATEGY = new NumberStrategy(Calendar.WEEK_OF_YEAR);
-    private static final Strategy WEEK_OF_MONTH_STRATEGY = new NumberStrategy(Calendar.WEEK_OF_MONTH);
-    private static final Strategy DAY_OF_YEAR_STRATEGY = new NumberStrategy(Calendar.DAY_OF_YEAR);
-    private static final Strategy DAY_OF_MONTH_STRATEGY = new NumberStrategy(Calendar.DAY_OF_MONTH);
-    private static final Strategy DAY_OF_WEEK_IN_MONTH_STRATEGY = new NumberStrategy(Calendar.DAY_OF_WEEK_IN_MONTH);
-    private static final Strategy HOUR_OF_DAY_STRATEGY = new NumberStrategy(Calendar.HOUR_OF_DAY);
-    private static final Strategy MODULO_HOUR_OF_DAY_STRATEGY = new NumberStrategy(Calendar.HOUR_OF_DAY) {
-        @Override
-        int modify(final int iValue) {
-            return iValue % 24;
-        }
-    };
-    private static final Strategy MODULO_HOUR_STRATEGY = new NumberStrategy(Calendar.HOUR) {
-        @Override
-        int modify(final int iValue) {
-            return iValue % 12;
-        }
-    };
-    private static final Strategy HOUR_STRATEGY = new NumberStrategy(Calendar.HOUR);
-    private static final Strategy MINUTE_STRATEGY = new NumberStrategy(Calendar.MINUTE);
-    private static final Strategy SECOND_STRATEGY = new NumberStrategy(Calendar.SECOND);
-    private static final Strategy MILLISECOND_STRATEGY = new NumberStrategy(Calendar.MILLISECOND);
 }

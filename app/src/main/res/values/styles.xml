@@ -14,7 +14,9 @@
     <style name="ThemeOverlay.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="android:layout" tools:ignore="PrivateResource">@layout/m3_alert_dialog</item>
         <item name="android:background">@drawable/material_popup_background</item>
-        <item name="dialogCornerRadius" tools:ignore="PrivateResource">@dimen/m3_alert_dialog_corner_size</item>
+        <item name="dialogCornerRadius" tools:ignore="PrivateResource">
+            @dimen/m3_alert_dialog_corner_size
+        </item>
     </style>
 
     <!--===============-->
@@ -80,7 +82,7 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
-    
+
     <style name="FullScreenDialogTheme" parent="ThemeOverlay.Material3.Dialog">
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowNoTitle">true</item>
@@ -109,6 +111,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:paddingTop">4dp</item>
     </style>
+
     <style name="TextAppearance.BottomNavigation.Unselected" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">normal</item>
@@ -139,6 +142,7 @@
     </style>
 
     <style name="TextAppearance.Custom.CollapsingToolbar.Collapsed" parent="Widget.Material3.CollapsingToolbar.Medium" />
+
     <style name="TextAppearance.Custom.CollapsingToolbar.Expanded" parent="Widget.Material3.CollapsingToolbar.Large" />
 
     <style name="TabLayoutStyle" parent="Widget.Material3.TabLayout">
@@ -164,9 +168,12 @@
     </style>
 
     <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
-       <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">@drawable/ic_launcher_inset</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">
+            @drawable/ic_launcher_inset
+        </item>
         <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">#13131B</item>
-        <item name="android:windowSplashScreenIconBackgroundColor" tools:ignore="NewApi">#13131B</item>
+        <item name="android:windowSplashScreenIconBackgroundColor" tools:ignore="NewApi">#13131B
+        </item>
         <item name="android:windowSplashScreenBehavior" tools:ignore="NewApi">default</item>
         <item name="android:windowSplashscreenContent">@drawable/ic_launcher_inset</item>
 
@@ -174,7 +181,7 @@
         <item name="collapsingToolbarLayoutLargeSize">@dimen/collapsing_toolbar_large_size</item>
         <item name="collapsingToolbarLayoutLargeStyle">@style/Widget.Custom.CollapsingToolbar</item>
         <item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_material</item>
-       <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="switchPreferenceCompatStyle">
             @style/Preference.App.SwitchPreferenceCompat
         </item>
@@ -205,7 +212,8 @@
         <item name="switchStyle">@style/Widget.Switch</item>
         <item name="appBarLayoutStyle">@style/Widget.Material3.AppBarLayout</item>
         <item name="toolbarStyle">@style/Widget.Material3.Toolbar.Surface</item>
-        <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
+        <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch
+        </item>
     </style>
 
     <style name="MediaStoreChooserDialog" parent="@android:style/Theme.Material.Dialog.Alert">
@@ -236,6 +244,7 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
     <style name="NumberProgressBar_Passing_Green">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -248,6 +257,7 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
     <style name="NumberProgressBar_Beauty_Red">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -260,6 +270,7 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
     <style name="NumberProgressBar_Warning_Red">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -272,6 +283,7 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
     <style name="NumberProgressBar_Relax_Blue">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -284,6 +296,7 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
     <style name="NumberProgressBar_Grace_Yellow">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -296,6 +309,7 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
     <style name="NumberProgressBar_Funny_Orange">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -308,6 +322,7 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
     <style name="NumberProgressBar_Twinkle_Night">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>

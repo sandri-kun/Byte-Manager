@@ -1,81 +1,90 @@
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:openDrawer="start">
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary" />
         </com.google.android.material.appbar.AppBarLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
             <LinearLayout
                 android:id="@+id/topLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#212121"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
                     android:paddingLeft="12dp"
                     android:paddingTop="4dp"
                     android:paddingRight="4dp"
                     android:paddingBottom="4dp"
-                    android:text="AndroiManifest.xml"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
                     android:singleLine="true"
-                    android:layout_weight="1"
-                    android:ellipsize="end" />
+                    android:text="AndroiManifest.xml"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
                 <TextView
                     android:id="@+id/subtitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="right"
                     android:paddingLeft="4dp"
                     android:paddingTop="4dp"
                     android:paddingRight="12dp"
                     android:paddingBottom="4dp"
-                    android:gravity="right"
-                    android:text="1:1   UTF-8"
-                    android:textSize="12sp"
-                    android:textColor="#FFFFFF"
                     android:singleLine="true"
-                    android:layout_weight="1"
-                    android:ellipsize="end" />
+                    android:text="1:1   UTF-8"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
             </LinearLayout>
+
             <org.bytedata.manager.ui.editor.CodeEditorView
                 android:id="@+id/editor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="8dp"
+                android:layout_weight="1"
                 android:background="#263238"
+                android:padding="8dp"
                 android:text="Editor"
-                android:textSize="12sp"
                 android:textColor="#FFFFFF"
-                android:layout_weight="1" />
+                android:textSize="12sp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
                 android:background="@drawable/edittext_bottom_border" />
+
             <LinearLayout
                 android:id="@+id/searchLayout"
                 android:layout_width="match_parent"
@@ -83,12 +92,14 @@
                 android:background="#303030"
                 android:orientation="vertical"
                 android:visibility="gone">
+
                 <LinearLayout
                     android:id="@+id/linear2"
                     android:layout_width="match_parent"
                     android:layout_height="38dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/textview3"
                         android:layout_width="wrap_content"
@@ -96,21 +107,23 @@
                         android:layout_marginLeft="8dp"
                         android:padding="8dp"
                         android:text="Hasil Pencarian:"
+                        android:textColor="#FFFFFF"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF" />
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/matchedTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:paddingTop="8dp"
                         android:paddingRight="8dp"
                         android:paddingBottom="8dp"
                         android:text="0 / 0"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
                         android:textColor="#FFFFFF"
-                        android:layout_weight="1" />
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/matchTextView"
                         android:layout_width="wrap_content"
@@ -120,9 +133,10 @@
                         android:paddingRight="8dp"
                         android:paddingBottom="4dp"
                         android:text="Cc"
+                        android:textColor="#FFFFFF"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF" />
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/wordsTextView"
                         android:layout_width="wrap_content"
@@ -132,9 +146,10 @@
                         android:paddingRight="8dp"
                         android:paddingBottom="4dp"
                         android:text="W"
+                        android:textColor="#FFFFFF"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF" />
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/regexTextView"
                         android:layout_width="wrap_content"
@@ -145,15 +160,17 @@
                         android:paddingRight="8dp"
                         android:paddingBottom="4dp"
                         android:text=".*"
+                        android:textColor="#FFFFFF"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF" />
+                        android:textStyle="bold" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/linear4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/textview8"
                         android:layout_width="wrap_content"
@@ -161,33 +178,37 @@
                         android:layout_marginLeft="8dp"
                         android:padding="8dp"
                         android:text="Search:  "
+                        android:textColor="#FFFFFF"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF" />
+                        android:textStyle="bold" />
+
                     <EditText
                         android:id="@+id/editText"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginRight="8dp"
+                        android:layout_weight="1"
                         android:padding="8dp"
-                        android:textSize="16sp"
+                        android:singleLine="true"
                         android:textColor="#FAFAFA"
                         android:textColorHint="#ECEFF1"
-                        android:singleLine="true"
-                        android:layout_weight="1" />
+                        android:textSize="16sp" />
+
                     <ImageView
                         android:id="@+id/imageview1"
                         android:layout_width="26dp"
                         android:layout_height="match_parent"
                         android:padding="2dp"
-                        android:src="@drawable/arrow_drop_down_24dp"
-                        android:scaleType="centerInside" />
+                        android:scaleType="centerInside"
+                        android:src="@drawable/arrow_drop_down_24dp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/linear6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/textview13"
                         android:layout_width="wrap_content"
@@ -195,92 +216,103 @@
                         android:layout_marginLeft="8dp"
                         android:padding="8dp"
                         android:text="Replace:"
+                        android:textColor="#FFFFFF"
                         android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF" />
+                        android:textStyle="bold" />
+
                     <EditText
                         android:id="@+id/editText2"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginRight="8dp"
+                        android:layout_weight="1"
                         android:padding="8dp"
-                        android:textSize="16sp"
+                        android:singleLine="true"
                         android:textColor="#FAFAFA"
                         android:textColorHint="#ECEFF1"
-                        android:singleLine="true"
-                        android:layout_weight="1" />
+                        android:textSize="16sp" />
+
                     <ImageView
                         android:id="@+id/imageview2"
                         android:layout_width="26dp"
                         android:layout_height="match_parent"
                         android:padding="2dp"
-                        android:src="@drawable/arrow_drop_down_24dp"
-                        android:scaleType="centerInside" />
+                        android:scaleType="centerInside"
+                        android:src="@drawable/arrow_drop_down_24dp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/linear5"
                     android:layout_width="match_parent"
                     android:layout_height="38dp"
                     android:layout_marginTop="15dp"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/prevTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:padding="8dp"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:text="&lt; PREV"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
                         android:layout_weight="1"
-                        android:ellipsize="end" />
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="8dp"
+                        android:text="&lt; PREV"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/nextTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:padding="8dp"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:text="NEXT &gt;"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
                         android:layout_weight="1"
-                        android:ellipsize="end" />
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="8dp"
+                        android:text="NEXT &gt;"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/replaceTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:padding="8dp"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:text="REPLACE THIS"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
                         android:layout_weight="1"
-                        android:ellipsize="end" />
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="8dp"
+                        android:text="REPLACE THIS"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/replaceAllTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:padding="8dp"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:text="REPLACE ALL"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
                         android:layout_weight="1"
-                        android:ellipsize="end" />
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:padding="8dp"
+                        android:text="REPLACE ALL"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
     <LinearLayout
         android:id="@+id/_nav_view"
         android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#EEEEEE">
-        <include layout="@layout/drawer_editor" android:id="@+id/drawer" />
+
+        <include
+            android:id="@+id/drawer"
+            layout="@layout/drawer_editor" />
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

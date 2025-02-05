@@ -15,62 +15,64 @@ import androidx.viewbinding.ViewBinding;
 
 public abstract class BaseDialogFragment<B extends ViewBinding> extends DialogFragment {
 
-	private B binding;
+    private B binding;
 
-	/**
-	 * Override untuk DialogFragment berbasis View Binding.
-	 */
-	protected B getBinding() {
-		return binding;
-	}
+    /**
+     * Override untuk DialogFragment berbasis View Binding.
+     */
+    protected B getBinding() {
+        return binding;
+    }
 
-	/**
-	 * Override untuk DialogFragment berbasis View Binding.
-	 */
-	@Nullable
-	protected B initializeBinding(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
-		return null;
-	}
+    /**
+     * Override untuk DialogFragment berbasis View Binding.
+     */
+    @Nullable
+    protected B initializeBinding(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        return null;
+    }
 
-	/**
-	 * Override untuk DialogFragment berbasis layout ID.
-	 */
-	@LayoutRes
-	protected int layoutId() {
-		return 0; // Default, jika subclass tidak mendefinisikan layout ID
-	}
+    /**
+     * Override untuk DialogFragment berbasis layout ID.
+     */
+    @LayoutRes
+    protected int layoutId() {
+        return 0; // Default, jika subclass tidak mendefinisikan layout ID
+    }
 
-	protected <T extends View> T findViewById(@IdRes int id) {
-		return requireView().findViewById(id);
-	}
+    protected <T extends View> T findViewById(@IdRes int id) {
+        return requireView().findViewById(id);
+    }
 
-	@Nullable
-	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		int layoutId = layoutId();
-		if (layoutId != 0) {
-			return inflater.inflate(layoutId, container, false);
-		}
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        int layoutId = layoutId();
+        if (layoutId != 0) {
+            return inflater.inflate(layoutId, container, false);
+        }
 
-		binding = initializeBinding(inflater, container);
-		if (binding != null) {
-			return binding.getRoot();
-		}
+        binding = initializeBinding(inflater, container);
+        if (binding != null) {
+            return binding.getRoot();
+        }
 
-		throw new IllegalStateException("Either layoutId() or initializeBinding() must be overridden");
-	}
+        throw new IllegalStateException("Either layoutId() or initializeBinding() must be overridden");
+    }
 
-	public void onBackPressed() {
-		requireActivity().finish();
-	}
+    public void onBackPressed() {
+        requireActivity().finish();
+    }
 
-	public void onRequestPermissionsResultFragment(int requestCode, String[] permissions, int[] grantResults) {}
+    public void onRequestPermissionsResultFragment(int requestCode, String[] permissions, int[] grantResults) {
+    }
 
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {}
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
 
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		binding = null; // Hindari memory leak
-	}
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // Hindari memory leak
+    }
 }

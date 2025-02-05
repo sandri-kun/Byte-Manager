@@ -13,22 +13,6 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class TLRPC {
 
-    public class Document {
-        @SerializedName("file_name")
-        public String fileName;
-        @SerializedName("size")
-        public String size;
-        @SerializedName("date")
-        public long date;
-    }
-
-    public class TextListItem {
-        @SerializedName("title")
-        public String title;
-        @SerializedName("subtitle")
-        public String subtitle;
-    }
-
     public static class AppAds {
         @SerializedName("ads_version")
         public String adsVersion;
@@ -44,6 +28,22 @@ public class TLRPC {
         public String rewardedId;
         @SerializedName("app_open_id")
         public String appOpenId;
+    }
+
+    public class Document {
+        @SerializedName("file_name")
+        public String fileName;
+        @SerializedName("size")
+        public String size;
+        @SerializedName("date")
+        public long date;
+    }
+
+    public class TextListItem {
+        @SerializedName("title")
+        public String title;
+        @SerializedName("subtitle")
+        public String subtitle;
     }
 
     public class TL_help_appUpdate {

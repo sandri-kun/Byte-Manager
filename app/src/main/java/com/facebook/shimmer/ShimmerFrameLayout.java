@@ -82,6 +82,10 @@ public class ShimmerFrameLayout extends FrameLayout {
         }
     }
 
+    public @Nullable Shimmer getShimmer() {
+        return mShimmerDrawable.getShimmer();
+    }
+
     public ShimmerFrameLayout setShimmer(@Nullable Shimmer shimmer) {
         mShimmerDrawable.setShimmer(shimmer);
         if (shimmer != null && shimmer.clipToChildren) {
@@ -93,24 +97,26 @@ public class ShimmerFrameLayout extends FrameLayout {
         return this;
     }
 
-    public @Nullable Shimmer getShimmer() {
-        return mShimmerDrawable.getShimmer();
-    }
-
-    /** Starts the shimmer animation. */
+    /**
+     * Starts the shimmer animation.
+     */
     public void startShimmer() {
         if (isAttachedToWindow()) {
             mShimmerDrawable.startShimmer();
         }
     }
 
-    /** Stops the shimmer animation. */
+    /**
+     * Stops the shimmer animation.
+     */
     public void stopShimmer() {
         mStoppedShimmerBecauseVisibility = false;
         mShimmerDrawable.stopShimmer();
     }
 
-    /** Return whether the shimmer animation has been started. */
+    /**
+     * Return whether the shimmer animation has been started.
+     */
     public boolean isShimmerStarted() {
         return mShimmerDrawable.isShimmerStarted();
     }
@@ -128,14 +134,18 @@ public class ShimmerFrameLayout extends FrameLayout {
         invalidate();
     }
 
-    /** Sets the ShimmerDrawable to be invisible, stopping it in the process. */
+    /**
+     * Sets the ShimmerDrawable to be invisible, stopping it in the process.
+     */
     public void hideShimmer() {
         stopShimmer();
         mShowShimmer = false;
         invalidate();
     }
 
-    /** Return whether the shimmer drawable is visible. */
+    /**
+     * Return whether the shimmer drawable is visible.
+     */
     public boolean isShimmerVisible() {
         return mShowShimmer;
     }

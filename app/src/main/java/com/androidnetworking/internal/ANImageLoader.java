@@ -44,9 +44,7 @@ public class ANImageLoader {
 
     // Use 1/8th of the available memory for this memory cache.
     private static final int cacheSize = maxMemory / 8;
-
-    private int mBatchResponseDelayMs = 100;
-
+    private static ANImageLoader sInstance;
     private final ImageCache mCache;
 
     private final HashMap<String, BatchedImageRequest> mInFlightRequests =
@@ -56,12 +54,13 @@ public class ANImageLoader {
             new HashMap<String, BatchedImageRequest>();
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
-
+    private int mBatchResponseDelayMs = 100;
     private Runnable mRunnable;
-
     private BitmapFactory.Options mBitmapOptions = new BitmapFactory.Options();
 
-    private static ANImageLoader sInstance;
+    public ANImageLoader(ImageCache imageCache) {
+        mCache = imageCache;
+    }
 
     public static void initialize() {
         getInstance();
@@ -76,24 +75,6 @@ public class ANImageLoader {
             }
         }
         return sInstance;
-    }
-
-    public interface ImageCache {
-        Bitmap getBitmap(String key);
-
-        void putBitmap(String key, Bitmap bitmap);
-
-        void evictBitmap(String key);
-
-        void evictAllBitmap();
-    }
-
-    public ANImageLoader(ImageCache imageCache) {
-        mCache = imageCache;
-    }
-
-    public ImageCache getImageCache() {
-        return mCache;
     }
 
     public static ImageListener getImageListener(final ImageView view,
@@ -118,11 +99,14 @@ public class ANImageLoader {
         };
     }
 
-    public interface ImageListener {
+    private static String getCacheKey(String url, int maxWidth, int maxHeight,
+                                      ImageView.ScaleType scaleType) {
+        return "#W" + maxWidth +
+                "#H" + maxHeight + "#S" + scaleType.ordinal() + url;
+    }
 
-        void onResponse(ImageContainer response, boolean isImmediate);
-
-        void onError(ANError anError);
+    public ImageCache getImageCache() {
+        return mCache;
     }
 
     public boolean isCached(String requestUrl, int maxWidth, int maxHeight) {
@@ -140,7 +124,6 @@ public class ANImageLoader {
     public ImageContainer get(String requestUrl, final ImageListener listener) {
         return get(requestUrl, listener, 0, 0);
     }
-
 
     public ImageContainer get(String requestUrl, ImageListener imageListener,
                               int maxWidth, int maxHeight) {
@@ -215,7 +198,6 @@ public class ANImageLoader {
         mBatchResponseDelayMs = newBatchedResponseDelayMs;
     }
 
-
     protected void onGetImageSuccess(String cacheKey, Bitmap response) {
         mCache.putBitmap(cacheKey, response);
 
@@ -237,15 +219,63 @@ public class ANImageLoader {
         }
     }
 
+    private void batchResponse(String cacheKey, BatchedImageRequest request) {
+        mBatchedResponses.put(cacheKey, request);
+        if (mRunnable == null) {
+            mRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    for (BatchedImageRequest bir : mBatchedResponses.values()) {
+                        for (ImageContainer container : bir.mContainers) {
+                            if (container.mListener == null) {
+                                continue;
+                            }
+                            if (bir.getError() == null) {
+                                container.mBitmap = bir.mResponseBitmap;
+                                container.mListener.onResponse(container, false);
+                            } else {
+                                container.mListener.onError(bir.getError());
+                            }
+                        }
+                    }
+                    mBatchedResponses.clear();
+                    mRunnable = null;
+                }
+
+            };
+            mHandler.postDelayed(mRunnable, mBatchResponseDelayMs);
+        }
+    }
+
+    private void throwIfNotOnMainThread() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new IllegalStateException("ImageLoader must be invoked from the main thread.");
+        }
+    }
+
+    public interface ImageCache {
+        Bitmap getBitmap(String key);
+
+        void putBitmap(String key, Bitmap bitmap);
+
+        void evictBitmap(String key);
+
+        void evictAllBitmap();
+    }
+
+    public interface ImageListener {
+
+        void onResponse(ImageContainer response, boolean isImmediate);
+
+        void onError(ANError anError);
+    }
+
     public class ImageContainer {
 
-        private Bitmap mBitmap;
-
         private final ImageListener mListener;
-
         private final String mCacheKey;
-
         private final String mRequestUrl;
+        private Bitmap mBitmap;
 
         public ImageContainer(Bitmap bitmap, String requestUrl,
                               String cacheKey, ImageListener listener) {
@@ -290,24 +320,21 @@ public class ANImageLoader {
     private class BatchedImageRequest {
 
         private final ANRequest mRequest;
-
-        private Bitmap mResponseBitmap;
-
-        private ANError mANError;
-
         private final LinkedList<ImageContainer> mContainers = new LinkedList<ImageContainer>();
+        private Bitmap mResponseBitmap;
+        private ANError mANError;
 
         public BatchedImageRequest(ANRequest request, ImageContainer container) {
             mRequest = request;
             mContainers.add(container);
         }
 
-        public void setError(ANError anError) {
-            mANError = anError;
-        }
-
         public ANError getError() {
             return mANError;
+        }
+
+        public void setError(ANError anError) {
+            mANError = anError;
         }
 
         public void addContainer(ImageContainer container) {
@@ -326,45 +353,5 @@ public class ANImageLoader {
             }
             return false;
         }
-    }
-
-    private void batchResponse(String cacheKey, BatchedImageRequest request) {
-        mBatchedResponses.put(cacheKey, request);
-        if (mRunnable == null) {
-            mRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    for (BatchedImageRequest bir : mBatchedResponses.values()) {
-                        for (ImageContainer container : bir.mContainers) {
-                            if (container.mListener == null) {
-                                continue;
-                            }
-                            if (bir.getError() == null) {
-                                container.mBitmap = bir.mResponseBitmap;
-                                container.mListener.onResponse(container, false);
-                            } else {
-                                container.mListener.onError(bir.getError());
-                            }
-                        }
-                    }
-                    mBatchedResponses.clear();
-                    mRunnable = null;
-                }
-
-            };
-            mHandler.postDelayed(mRunnable, mBatchResponseDelayMs);
-        }
-    }
-
-    private void throwIfNotOnMainThread() {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw new IllegalStateException("ImageLoader must be invoked from the main thread.");
-        }
-    }
-
-    private static String getCacheKey(String url, int maxWidth, int maxHeight,
-                                      ImageView.ScaleType scaleType) {
-        return "#W" + maxWidth +
-                "#H" + maxHeight + "#S" + scaleType.ordinal() + url;
     }
 }

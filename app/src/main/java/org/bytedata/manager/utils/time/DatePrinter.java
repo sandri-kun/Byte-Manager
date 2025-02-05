@@ -23,9 +23,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * <p>DatePrinter is the "missing" interface for the format methods of 
+ * <p>DatePrinter is the "missing" interface for the format methods of
  * {@link java.text.DateFormat}.</p>
- * 
+ *
  * @since 3.2
  */
 public interface DatePrinter {

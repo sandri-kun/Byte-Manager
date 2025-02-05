@@ -11,13 +11,13 @@ import java.util.ArrayList;
 
 public class DispatchQueueMainThreadSync extends Thread {
 
+    private static int indexPointer = 0;
+    public final int index = indexPointer++;
+    private final ArrayList<PostponedTask> postponedTasks = new ArrayList<>();
     private volatile Handler handler = null;
     private boolean isRunning;
     private boolean isRecycled;
     private long lastTaskTime;
-    private static int indexPointer = 0;
-    public final int index = indexPointer++;
-    private final ArrayList<PostponedTask> postponedTasks = new ArrayList<>();
 
     public DispatchQueueMainThreadSync(final String threadName) {
         this(threadName, true);
@@ -31,7 +31,7 @@ public class DispatchQueueMainThreadSync extends Thread {
     }
 
     public void sendMessage(Message msg, int delay) {
-       checkThread();
+        checkThread();
         if (isRecycled) {
             return;
         }

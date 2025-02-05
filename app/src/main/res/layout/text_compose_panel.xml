@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<?xml version="1.0" encoding="utf-8"?><!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~    sora-editor - the awesome code editor for Android
   ~    https://github.com/Rosemoe/sora-editor
   ~    Copyright (C) 2020-2024  Rosemoe
@@ -23,92 +22,91 @@
   ~     additional information or have any questions
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="wrap_content"
-	android:layout_height="match_parent"
-	android:orientation="horizontal"
-	android:gravity="center_vertical"
-	android:background="@drawable/magnifier_background"
-	android:id="@+id/panel_root">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/panel_root"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/magnifier_background"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
-	<HorizontalScrollView
-		android:layout_height="match_parent"
-		android:layout_width="wrap_content"
-		android:id="@+id/panel_hv">
+    <HorizontalScrollView
+        android:id="@+id/panel_hv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
-		<LinearLayout
-			android:layout_height="match_parent"
-			android:layout_width="wrap_content"
-			android:orientation="horizontal"
-			android:gravity="center_vertical">
-			
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
             <ImageButton
-				android:id="@+id/panel_btn_search"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
+                android:id="@+id/panel_btn_search"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Search"
                 android:padding="4dp"
-				android:contentDescription="Search"
-				android:src="@drawable/search_24dp"
-				android:background="?android:attr/selectableItemBackground" />
+                android:src="@drawable/search_24dp" />
 
-			<ImageButton
-				android:id="@+id/panel_btn_select_all"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
-                android:padding="4dp"
-				android:contentDescription="@android:string/selectAll"
-				android:src="@drawable/select_all_24dp"
-				android:background="?android:attr/selectableItemBackground" />
-                
             <ImageButton
-				android:id="@+id/panel_btn_cut"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
+                android:id="@+id/panel_btn_select_all"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@android:string/selectAll"
                 android:padding="4dp"
-				android:contentDescription="@android:string/cut"
-				android:src="@drawable/content_cut_24dp"
-				android:background="?android:attr/selectableItemBackground" />
-                
-			<ImageButton
-				android:id="@+id/panel_btn_copy"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
-                android:padding="4dp"
-				android:contentDescription="@android:string/copy"
-				android:src="@drawable/content_copy_24dp"
-				android:background="?android:attr/selectableItemBackground" />
+                android:src="@drawable/select_all_24dp" />
 
-			<ImageButton
-				android:id="@+id/panel_btn_paste"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
-                android:padding="4dp"
-				android:contentDescription="@android:string/paste"
-				android:src="@drawable/content_copy_24dp"
-				android:background="?android:attr/selectableItemBackground" />
-
-			<ImageButton
-				android:id="@+id/panel_btn_long_select"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
-                android:padding="4dp"
-				android:contentDescription="sora_editor_long_select"
-				android:src="@drawable/invert_colors_24dp"
-				android:background="?android:attr/selectableItemBackground" />
-                
             <ImageButton
-				android:id="@+id/panel_btn_translate"
-				android:layout_width="45dp"
-				android:layout_height="45dp"
+                android:id="@+id/panel_btn_cut"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@android:string/cut"
                 android:padding="4dp"
-				android:contentDescription="Translate"
-				android:src="@drawable/translate_24dp"
-				android:background="?android:attr/selectableItemBackground" />
+                android:src="@drawable/content_cut_24dp" />
 
-		</LinearLayout>
+            <ImageButton
+                android:id="@+id/panel_btn_copy"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@android:string/copy"
+                android:padding="4dp"
+                android:src="@drawable/content_copy_24dp" />
 
-	</HorizontalScrollView>
+            <ImageButton
+                android:id="@+id/panel_btn_paste"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@android:string/paste"
+                android:padding="4dp"
+                android:src="@drawable/content_copy_24dp" />
+
+            <ImageButton
+                android:id="@+id/panel_btn_long_select"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="sora_editor_long_select"
+                android:padding="4dp"
+                android:src="@drawable/invert_colors_24dp" />
+
+            <ImageButton
+                android:id="@+id/panel_btn_translate"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Translate"
+                android:padding="4dp"
+                android:src="@drawable/translate_24dp" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
 </LinearLayout>
 

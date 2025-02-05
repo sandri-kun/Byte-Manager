@@ -78,13 +78,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
     // So, don't change this code! It works and is very fast.
 
     /**
-     * Required for serialization support.
-     *
-     * @see Serializable
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
      * FULL locale dependent date or time style.
      */
     public static final int FULL = DateFormat.FULL;
@@ -100,7 +93,14 @@ public class FastDatePrinter implements DatePrinter, Serializable {
      * SHORT locale dependent date or time style.
      */
     public static final int SHORT = DateFormat.SHORT;
-
+    /**
+     * Required for serialization support.
+     *
+     * @see Serializable
+     */
+    private static final long serialVersionUID = 1L;
+    private static final ConcurrentMap<TimeZoneDisplayKey, String> cTimeZoneDisplayCache =
+            new ConcurrentHashMap<TimeZoneDisplayKey, String>(7);
     /**
      * The pattern.
      */
@@ -117,13 +117,13 @@ public class FastDatePrinter implements DatePrinter, Serializable {
      * The parsed rules.
      */
     private transient Rule[] mRules;
+
+    // Constructor
+    //-----------------------------------------------------------------------
     /**
      * The estimated maximum length.
      */
     private transient int mMaxLengthEstimate;
-
-    // Constructor
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Constructs a new FastDatePrinter.</p>
@@ -141,6 +141,32 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         init();
     }
 
+    // Parse the pattern
+    //-----------------------------------------------------------------------
+
+    /**
+     * <p>Gets the time zone display name, using a cache for performance.</p>
+     *
+     * @param tz       the zone to query
+     * @param daylight true if daylight savings
+     * @param style    the style to use {@code TimeZone.LONG} or {@code TimeZone.SHORT}
+     * @param locale   the locale to use
+     * @return the textual name of the time zone
+     */
+    static String getTimeZoneDisplay(final TimeZone tz, final boolean daylight, final int style, final Locale locale) {
+        final TimeZoneDisplayKey key = new TimeZoneDisplayKey(tz, daylight, style, locale);
+        String value = cTimeZoneDisplayCache.get(key);
+        if (value == null) {
+            // This is a very slow call, so cache the results.
+            value = tz.getDisplayName(daylight, style, locale);
+            final String prior = cTimeZoneDisplayCache.putIfAbsent(key, value);
+            if (prior != null) {
+                value = prior;
+            }
+        }
+        return value;
+    }
+
     /**
      * <p>Initializes the instance for first use.</p>
      */
@@ -155,9 +181,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
 
         mMaxLengthEstimate = len;
     }
-
-    // Parse the pattern
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Returns a list of Rules given a pattern.</p>
@@ -301,6 +324,9 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         return rules;
     }
 
+    // Format methods
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Performs the parsing of tokens.</p>
      *
@@ -377,9 +403,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
                 return new PaddedNumberField(field, padding);
         }
     }
-
-    // Format methods
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Formats a {@code Date}, {@code Calendar} or
@@ -511,6 +534,9 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         return mTimeZone;
     }
 
+    // Basics
+    //-----------------------------------------------------------------------
+
     /* (non-Javadoc)
      * @see org.apache.commons.lang3.time.DatePrinter#getLocale()
      */
@@ -532,9 +558,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         return mMaxLengthEstimate;
     }
 
-    // Basics
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Compares two objects for equality.</p>
      *
@@ -552,6 +575,9 @@ public class FastDatePrinter implements DatePrinter, Serializable {
                 && mLocale.equals(other.mLocale);
     }
 
+    // Serializing
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Returns a hashcode compatible with equals.</p>
      *
@@ -562,6 +588,9 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         return mPattern.hashCode() + 13 * (mTimeZone.hashCode() + 13 * mLocale.hashCode());
     }
 
+    // Rules
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Gets a debugging string version of this formatter.</p>
      *
@@ -571,9 +600,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
     public String toString() {
         return "FastDatePrinter[" + mPattern + "," + mLocale + "," + mTimeZone.getID() + "]";
     }
-
-    // Serializing
-    //-----------------------------------------------------------------------
 
     /**
      * Create the object after serialization. This implementation reinitializes the
@@ -587,9 +613,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         in.defaultReadObject();
         init();
     }
-
-    // Rules
-    //-----------------------------------------------------------------------
 
     /**
      * <p>Inner class defining a rule.</p>
@@ -1010,6 +1033,8 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         }
     }
 
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Inner class to output the twelve hour field.</p>
      */
@@ -1098,34 +1123,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
         public void appendTo(final StringBuffer buffer, final int value) {
             mRule.appendTo(buffer, value);
         }
-    }
-
-    //-----------------------------------------------------------------------
-
-    private static final ConcurrentMap<TimeZoneDisplayKey, String> cTimeZoneDisplayCache =
-            new ConcurrentHashMap<TimeZoneDisplayKey, String>(7);
-
-    /**
-     * <p>Gets the time zone display name, using a cache for performance.</p>
-     *
-     * @param tz       the zone to query
-     * @param daylight true if daylight savings
-     * @param style    the style to use {@code TimeZone.LONG} or {@code TimeZone.SHORT}
-     * @param locale   the locale to use
-     * @return the textual name of the time zone
-     */
-    static String getTimeZoneDisplay(final TimeZone tz, final boolean daylight, final int style, final Locale locale) {
-        final TimeZoneDisplayKey key = new TimeZoneDisplayKey(tz, daylight, style, locale);
-        String value = cTimeZoneDisplayCache.get(key);
-        if (value == null) {
-            // This is a very slow call, so cache the results.
-            value = tz.getDisplayName(daylight, style, locale);
-            final String prior = cTimeZoneDisplayCache.putIfAbsent(key, value);
-            if (prior != null) {
-                value = prior;
-            }
-        }
-        return value;
     }
 
     /**

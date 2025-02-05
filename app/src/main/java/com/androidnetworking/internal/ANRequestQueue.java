@@ -32,10 +32,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ANRequestQueue {
 
+    private static ANRequestQueue sInstance = null;
     private final Set<ANRequest> mCurrentRequests =
             Collections.newSetFromMap(new ConcurrentHashMap<ANRequest, Boolean>());
     private final AtomicInteger mSequenceGenerator = new AtomicInteger();
-    private static ANRequestQueue sInstance = null;
 
     public static void initialize() {
         getInstance();
@@ -50,10 +50,6 @@ public class ANRequestQueue {
             }
         }
         return sInstance;
-    }
-
-    public interface RequestFilter {
-        boolean apply(ANRequest request);
     }
 
     private void cancel(RequestFilter filter, boolean forceCancel) {
@@ -164,6 +160,10 @@ public class ANRequestQueue {
             return tempRequestTag.equals(tempTag);
         }
         return request.getTag().equals(tag);
+    }
+
+    public interface RequestFilter {
+        boolean apply(ANRequest request);
     }
 
 }

@@ -32,14 +32,6 @@ public class ANResponse<T> {
 
     private Response response;
 
-    public static <T> ANResponse<T> success(T result) {
-        return new ANResponse<>(result);
-    }
-
-    public static <T> ANResponse<T> failed(ANError anError) {
-        return new ANResponse<>(anError);
-    }
-
     public ANResponse(T result) {
         this.mResult = result;
         this.mANError = null;
@@ -48,6 +40,14 @@ public class ANResponse<T> {
     public ANResponse(ANError anError) {
         this.mResult = null;
         this.mANError = anError;
+    }
+
+    public static <T> ANResponse<T> success(T result) {
+        return new ANResponse<>(result);
+    }
+
+    public static <T> ANResponse<T> failed(ANError anError) {
+        return new ANResponse<>(anError);
     }
 
     public T getResult() {
@@ -62,12 +62,12 @@ public class ANResponse<T> {
         return mANError;
     }
 
-    public void setOkHttpResponse(Response response) {
-        this.response = response;
-    }
-
     public Response getOkHttpResponse() {
         return response;
+    }
+
+    public void setOkHttpResponse(Response response) {
+        this.response = response;
     }
 
 }

@@ -13,8 +13,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.bytedata.manager.ApplicationLoader;
-import org.bytedata.manager.utils.time.FastDateFormat;
 import org.bytedata.manager.LaunchActivity;
+import org.bytedata.manager.utils.time.FastDateFormat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,23 +25,29 @@ import java.util.HashSet;
 import java.util.Locale;
 
 public class FileLog {
+    private final static String tag = "log";
+    private final static String mtproto_tag = "MTProto";
+    public static boolean databaseIsMalformed = false;
+    private static volatile FileLog Instance = null;
+    private static Gson gson;
+    private static HashSet<String> excludeRequests;
     private OutputStreamWriter streamWriter = null;
     private FastDateFormat dateFormat = null;
     private DispatchQueue logQueue = null;
-
     private File currentFile = null;
     private File networkFile = null;
     private File tonlibFile = null;
     private boolean initied;
-    public static boolean databaseIsMalformed = false;
-
     private OutputStreamWriter tlStreamWriter = null;
     private File tlRequestsFile = null;
 
-    private final static String tag = "log";
-    private final static String mtproto_tag = "MTProto";
+    public FileLog() {
+        if (!BuildVars.LOGS_ENABLED) {
+            return;
+        }
+        init();
+    }
 
-    private static volatile FileLog Instance = null;
     public static FileLog getInstance() {
         FileLog localInstance = Instance;
         if (localInstance == null) {
@@ -53,50 +59,6 @@ public class FileLog {
             }
         }
         return localInstance;
-    }
-
-    public FileLog() {
-        if (!BuildVars.LOGS_ENABLED) {
-            return;
-        }
-        init();
-    }
-
-    private static Gson gson;
-    private static HashSet<String> excludeRequests;
-
-    public void init() {
-        if (initied) {
-            return;
-        }
-        dateFormat = FastDateFormat.getInstance("dd_MM_yyyy_HH_mm_ss", Locale.US);
-        String date = dateFormat.format(System.currentTimeMillis());
-        try {
-            File dir = AndroidUtilities.getLogsDir();
-            if (dir == null) {
-                return;
-            }
-            currentFile = new File(dir, date + ".txt");
-            tlRequestsFile = new File(dir, date + "_mtproto.txt");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            logQueue = new DispatchQueue("logQueue");
-            currentFile.createNewFile();
-            FileOutputStream stream = new FileOutputStream(currentFile);
-            streamWriter = new OutputStreamWriter(stream);
-            streamWriter.write("-----start log " + date + "-----\n");
-            streamWriter.flush();
-
-            FileOutputStream tlStream = new FileOutputStream(tlRequestsFile);
-            tlStreamWriter = new OutputStreamWriter(tlStream);
-            tlStreamWriter.write("-----start log " + date + "-----\n");
-            tlStreamWriter.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        initied = true;
     }
 
     public static void ensureInitied() {
@@ -326,7 +288,41 @@ public class FileLog {
         }
     }
 
-    public static class IgnoreSentException extends Exception{
+    public void init() {
+        if (initied) {
+            return;
+        }
+        dateFormat = FastDateFormat.getInstance("dd_MM_yyyy_HH_mm_ss", Locale.US);
+        String date = dateFormat.format(System.currentTimeMillis());
+        try {
+            File dir = AndroidUtilities.getLogsDir();
+            if (dir == null) {
+                return;
+            }
+            currentFile = new File(dir, date + ".txt");
+            tlRequestsFile = new File(dir, date + "_mtproto.txt");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            logQueue = new DispatchQueue("logQueue");
+            currentFile.createNewFile();
+            FileOutputStream stream = new FileOutputStream(currentFile);
+            streamWriter = new OutputStreamWriter(stream);
+            streamWriter.write("-----start log " + date + "-----\n");
+            streamWriter.flush();
+
+            FileOutputStream tlStream = new FileOutputStream(tlRequestsFile);
+            tlStreamWriter = new OutputStreamWriter(tlStream);
+            tlStreamWriter.write("-----start log " + date + "-----\n");
+            tlStreamWriter.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        initied = true;
+    }
+
+    public static class IgnoreSentException extends Exception {
 
         public IgnoreSentException(String e) {
             super(e);

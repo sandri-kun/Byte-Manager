@@ -53,13 +53,11 @@ import okhttp3.Response;
 
 public final class InternalNetworking {
 
+    public static String sUserAgent = null;
+
     private InternalNetworking() {
 
-    }
-
-    public static OkHttpClient sHttpClient = getClient();
-
-    public static String sUserAgent = null;
+    }    public static OkHttpClient sHttpClient = getClient();
 
     public static Response performSimpleRequest(ANRequest request) throws ANError {
         Request okHttpRequest;
@@ -217,7 +215,6 @@ public final class InternalNetworking {
         return okHttpResponse;
     }
 
-
     public static Response performUploadRequest(ANRequest request) throws ANError {
         Request okHttpRequest;
         Response okHttpResponse;
@@ -269,6 +266,10 @@ public final class InternalNetworking {
         return sHttpClient;
     }
 
+    public static void setClient(OkHttpClient okHttpClient) {
+        sHttpClient = okHttpClient;
+    }
+
     public static void addHeadersToRequestBuilder(Request.Builder builder, ANRequest request) {
         if (request.getUserAgent() != null) {
             builder.addHeader(ANConstants.USER_AGENT, request.getUserAgent());
@@ -306,10 +307,6 @@ public final class InternalNetworking {
         sUserAgent = userAgent;
     }
 
-    public static void setClient(OkHttpClient okHttpClient) {
-        sHttpClient = okHttpClient;
-    }
-
     public static void enableLogging(Level level) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(level);
@@ -318,5 +315,7 @@ public final class InternalNetworking {
                 .addInterceptor(logging)
                 .build();
     }
+
+
 
 }

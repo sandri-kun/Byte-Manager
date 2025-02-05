@@ -14,14 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SharedViewModel extends ViewModel {
     private static final String TAG = "SharedViewModel: ";
-
-    // Menggunakan ConcurrentHashMap untuk menyimpan LiveData dengan Bundle
-    private final Map<Integer, MutableLiveData<Bundle>> liveDataMap = new ConcurrentHashMap<>();
     public static int totalEvents = 1;
-
     public static final int POST_NOTIFICATION = totalEvents++;
     public static final int CONFIG_LOADED = totalEvents++;
     public static final int FIREBASE_ANALYTICS = totalEvents++;
+    // Menggunakan ConcurrentHashMap untuk menyimpan LiveData dengan Bundle
+    private final Map<Integer, MutableLiveData<Bundle>> liveDataMap = new ConcurrentHashMap<>();
 
     // Set LiveData tanpa argumen, menggunakan Bundle kosong
     public void setLiveData(int id) {

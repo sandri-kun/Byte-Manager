@@ -51,6 +51,12 @@ public class ConnectionClassManager {
         return sInstance;
     }
 
+    public static void shutDown() {
+        if (sInstance != null) {
+            sInstance = null;
+        }
+    }
+
     public synchronized void updateBandwidth(long bytes, long timeInMs) {
         if (timeInMs == 0 || bytes < 20000 || (bytes) * 1.0 / (timeInMs) *
                 BYTES_TO_BITS < BANDWIDTH_LOWER_BOUND) {
@@ -109,12 +115,6 @@ public class ConnectionClassManager {
 
     public void removeListener() {
         mConnectionQualityChangeListener = null;
-    }
-
-    public static void shutDown() {
-        if (sInstance != null) {
-            sInstance = null;
-        }
     }
 
 }

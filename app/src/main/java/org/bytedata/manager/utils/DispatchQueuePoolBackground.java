@@ -11,21 +11,24 @@ import java.util.ArrayList;
 
 public class DispatchQueuePoolBackground {
 
+    public static final String THREAD_PREFIX = "DispatchQueuePoolThreadSafety_";
+    private final static ArrayList<ArrayList<Runnable>> freeCollections = new ArrayList<>();
+    static ArrayList<Runnable> updateTaskCollection;
+    private static DispatchQueuePoolBackground backgroundQueue;
+    private static final Runnable finishCollectUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            finishCollectUpdateRunnables();
+        }
+    };
     private final ArrayList<DispatchQueue> queues = new ArrayList<>(10);
     private final SparseIntArray busyQueuesMap = new SparseIntArray();
     private final ArrayList<DispatchQueue> busyQueues = new ArrayList<>(10);
     private final int maxCount;
-    private int createdCount;
     private final int guid;
+    private int createdCount;
     private int totalTasksCount;
     private boolean cleanupScheduled;
-
-    public static final String THREAD_PREFIX = "DispatchQueuePoolThreadSafety_";
-
-    static ArrayList<Runnable> updateTaskCollection;
-    private static DispatchQueuePoolBackground backgroundQueue;
-
-
     private final Runnable cleanupRunnable = new Runnable() {
         @Override
         public void run() {
@@ -55,60 +58,11 @@ public class DispatchQueuePoolBackground {
         guid = Utilities.random.nextInt();
     }
 
-    private void execute(ArrayList<Runnable> runnables) {
-        for (int i = 0; i < runnables.size(); i++) {
-            Runnable runnable = runnables.get(i);
-            if (runnable == null) {
-                continue;
-            }
-            DispatchQueue queue;
-            if (!busyQueues.isEmpty() && (totalTasksCount / 2 <= busyQueues.size() || queues.isEmpty() && createdCount >= maxCount)) {
-                queue = busyQueues.remove(0);
-            } else if (queues.isEmpty()) {
-                queue = new DispatchQueue(THREAD_PREFIX + guid + "_" + Utilities.random.nextInt());
-                queue.setPriority(Thread.MAX_PRIORITY);
-                createdCount++;
-            } else {
-                queue = queues.remove(0);
-            }
-            if (!cleanupScheduled) {
-                Utilities.globalQueue.postRunnable(cleanupRunnable, 30000);
-                cleanupScheduled = true;
-            }
-            totalTasksCount++;
-            busyQueues.add(queue);
-            int count = busyQueuesMap.get(queue.index, 0);
-            busyQueuesMap.put(queue.index, count + 1);
-            queue.postRunnable(() -> {
-                runnable.run();
-                Utilities.globalQueue.postRunnable(() -> {
-                    totalTasksCount--;
-                    int remainingTasksCount = busyQueuesMap.get(queue.index) - 1;
-                    if (remainingTasksCount == 0) {
-                        busyQueuesMap.delete(queue.index);
-                        busyQueues.remove(queue);
-                        queues.add(queue);
-                    } else {
-                        busyQueuesMap.put(queue.index, remainingTasksCount);
-                    }
-                });
-            });
-        }
-    }
-
-    private final static ArrayList<ArrayList<Runnable>> freeCollections = new ArrayList<>();
-
-    private static final Runnable finishCollectUpdateRunnable = new Runnable() {
-        @Override
-        public void run() {
-            finishCollectUpdateRunnables();
-        }
-    };
-
     @UiThread
     public static void execute(Runnable runnable) {
         execute(runnable, false);
     }
+
     @UiThread
     public static void execute(Runnable runnable, boolean now) {
         if (Thread.currentThread() != ApplicationLoader.applicationHandler.getLooper().getThread()) {
@@ -153,5 +107,46 @@ public class DispatchQueuePoolBackground {
             });
         });
 
+    }
+
+    private void execute(ArrayList<Runnable> runnables) {
+        for (int i = 0; i < runnables.size(); i++) {
+            Runnable runnable = runnables.get(i);
+            if (runnable == null) {
+                continue;
+            }
+            DispatchQueue queue;
+            if (!busyQueues.isEmpty() && (totalTasksCount / 2 <= busyQueues.size() || queues.isEmpty() && createdCount >= maxCount)) {
+                queue = busyQueues.remove(0);
+            } else if (queues.isEmpty()) {
+                queue = new DispatchQueue(THREAD_PREFIX + guid + "_" + Utilities.random.nextInt());
+                queue.setPriority(Thread.MAX_PRIORITY);
+                createdCount++;
+            } else {
+                queue = queues.remove(0);
+            }
+            if (!cleanupScheduled) {
+                Utilities.globalQueue.postRunnable(cleanupRunnable, 30000);
+                cleanupScheduled = true;
+            }
+            totalTasksCount++;
+            busyQueues.add(queue);
+            int count = busyQueuesMap.get(queue.index, 0);
+            busyQueuesMap.put(queue.index, count + 1);
+            queue.postRunnable(() -> {
+                runnable.run();
+                Utilities.globalQueue.postRunnable(() -> {
+                    totalTasksCount--;
+                    int remainingTasksCount = busyQueuesMap.get(queue.index) - 1;
+                    if (remainingTasksCount == 0) {
+                        busyQueuesMap.delete(queue.index);
+                        busyQueues.remove(queue);
+                        queues.add(queue);
+                    } else {
+                        busyQueuesMap.put(queue.index, remainingTasksCount);
+                    }
+                });
+            });
+        }
     }
 }

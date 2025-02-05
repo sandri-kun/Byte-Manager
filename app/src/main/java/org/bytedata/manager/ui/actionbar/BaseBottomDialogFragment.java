@@ -65,9 +65,11 @@ public abstract class BaseBottomDialogFragment<B extends ViewBinding> extends Bo
         requireActivity().finish();
     }
 
-    public void onRequestPermissionsResultFragment(int requestCode, String[] permissions, int[] grantResults) {}
+    public void onRequestPermissionsResultFragment(int requestCode, String[] permissions, int[] grantResults) {
+    }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {}
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
 
     @Override
     public void onDestroyView() {

@@ -23,9 +23,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * <p>DateParser is the "missing" interface for the parsing methods of 
+ * <p>DateParser is the "missing" interface for the parsing methods of
  * {@link java.text.DateFormat}.</p>
- * 
+ *
  * @since 3.2
  */
 public interface DateParser {

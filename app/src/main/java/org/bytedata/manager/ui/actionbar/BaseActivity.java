@@ -25,6 +25,9 @@ import org.bytedata.manager.utils.LocaleController;
 
 public abstract class BaseActivity<B extends ViewBinding> extends AppCompatActivity {
 
+    // More
+    public static final int REQUEST_CODE_LEGACY_STORAGE = 1;
+    public static final int REQUEST_CODE_MEDIA_ACCESS = 2;
     private B binding;
 
     /**
@@ -73,17 +76,13 @@ public abstract class BaseActivity<B extends ViewBinding> extends AppCompatActiv
         binding = null; // Hindari memory leak
     }
 
-    // More
-    public static final int REQUEST_CODE_LEGACY_STORAGE = 1;
-    public static final int REQUEST_CODE_MEDIA_ACCESS = 2;
-
     public void requestPermissionMedia() {
         Activity activity = this;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13+ (API level 33+)
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_VIDEO)
-                            != PackageManager.PERMISSION_GRANTED ||
+                    != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_AUDIO)
                             != PackageManager.PERMISSION_GRANTED) {
 

@@ -20,8 +20,6 @@ import java.util.Map;
 
 public class DebugActivity extends Activity {
 
-    private String errorMessage = "";
-
     private static final Map<String, String> exceptionMap = new HashMap<String, String>() {{
         put("StringIndexOutOfBoundsException", "Invalid string operation\n");
         put("IndexOutOfBoundsException", "Invalid list operation\n");
@@ -29,6 +27,7 @@ public class DebugActivity extends Activity {
         put("NumberFormatException", "Invalid toNumber block operation\n");
         put("ActivityNotFoundException", "Invalid intent operation\n");
     }};
+    private String errorMessage = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

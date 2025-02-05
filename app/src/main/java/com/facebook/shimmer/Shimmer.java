@@ -31,60 +31,34 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class Shimmer {
     private static final int COMPONENT_COUNT = 4;
-
-    /** The shape of the shimmer's highlight. By default LINEAR is used. */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Shape.LINEAR, Shape.RADIAL})
-    public @interface Shape {
-        /** Linear gives a ray reflection effect. */
-        int LINEAR = 0;
-        /** Radial gives a spotlight effect. */
-        int RADIAL = 1;
-    }
-
-    /** Direction of the shimmer's sweep. */
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({
-            Direction.LEFT_TO_RIGHT,
-            Direction.TOP_TO_BOTTOM,
-            Direction.RIGHT_TO_LEFT,
-            Direction.BOTTOM_TO_TOP
-    })
-    public @interface Direction {
-        int LEFT_TO_RIGHT = 0;
-        int TOP_TO_BOTTOM = 1;
-        int RIGHT_TO_LEFT = 2;
-        int BOTTOM_TO_TOP = 3;
-    }
-
     final float[] positions = new float[COMPONENT_COUNT];
     final int[] colors = new int[COMPONENT_COUNT];
     final RectF bounds = new RectF();
-
-    @Direction int direction = Direction.LEFT_TO_RIGHT;
-    @ColorInt int highlightColor = Color.WHITE;
-    @ColorInt int baseColor = 0x4cffffff;
-    @Shape int shape = Shape.LINEAR;
+    @Direction
+    int direction = Direction.LEFT_TO_RIGHT;
+    @ColorInt
+    int highlightColor = Color.WHITE;
+    @ColorInt
+    int baseColor = 0x4cffffff;
+    @Shape
+    int shape = Shape.LINEAR;
     int fixedWidth = 0;
     int fixedHeight = 0;
-
     float widthRatio = 1f;
     float heightRatio = 1f;
     float intensity = 0f;
     float dropoff = 0.5f;
     float tilt = 20f;
-
     boolean clipToChildren = true;
     boolean autoStart = true;
     boolean alphaShimmer = true;
-
     int repeatCount = ValueAnimator.INFINITE;
     int repeatMode = ValueAnimator.RESTART;
     long animationDuration = 1000L;
     long repeatDelay;
     long startDelay;
-
-    Shimmer() {}
+    Shimmer() {
+    }
 
     int width(int width) {
         return fixedWidth > 0 ? fixedWidth : Math.round(widthRatio * width);
@@ -138,13 +112,52 @@ public class Shimmer {
         bounds.set(-padding, -padding, width(viewWidth) + padding, height(viewHeight) + padding);
     }
 
+    /**
+     * The shape of the shimmer's highlight. By default LINEAR is used.
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({Shape.LINEAR, Shape.RADIAL})
+    public @interface Shape {
+        /**
+         * Linear gives a ray reflection effect.
+         */
+        int LINEAR = 0;
+        /**
+         * Radial gives a spotlight effect.
+         */
+        int RADIAL = 1;
+    }
+
+    /**
+     * Direction of the shimmer's sweep.
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({
+            Direction.LEFT_TO_RIGHT,
+            Direction.TOP_TO_BOTTOM,
+            Direction.RIGHT_TO_LEFT,
+            Direction.BOTTOM_TO_TOP
+    })
+    public @interface Direction {
+        int LEFT_TO_RIGHT = 0;
+        int TOP_TO_BOTTOM = 1;
+        int RIGHT_TO_LEFT = 2;
+        int BOTTOM_TO_TOP = 3;
+    }
+
     public abstract static class Builder<T extends Builder<T>> {
         final Shimmer mShimmer = new Shimmer();
+
+        private static float clamp(float min, float max, float value) {
+            return Math.min(max, Math.max(min, value));
+        }
 
         // Gets around unchecked cast
         protected abstract T getThis();
 
-        /** Applies all specified options from the {@link AttributeSet}. */
+        /**
+         * Applies all specified options from the {@link AttributeSet}.
+         */
         public T consumeAttributes(Context context, AttributeSet attrs) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShimmerFrameLayout, 0, 0);
             return consumeAttributes(a);
@@ -253,7 +266,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Copies the configuration of an already built Shimmer to this builder */
+        /**
+         * Copies the configuration of an already built Shimmer to this builder
+         */
         public T copyFrom(Shimmer other) {
             setDirection(other.direction);
             setShape(other.shape);
@@ -276,19 +291,25 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets the direction of the shimmer's sweep. See {@link Direction}. */
+        /**
+         * Sets the direction of the shimmer's sweep. See {@link Direction}.
+         */
         public T setDirection(@Direction int direction) {
             mShimmer.direction = direction;
             return getThis();
         }
 
-        /** Sets the shape of the shimmer. See {@link Shape}. */
+        /**
+         * Sets the shape of the shimmer. See {@link Shape}.
+         */
         public T setShape(@Shape int shape) {
             mShimmer.shape = shape;
             return getThis();
         }
 
-        /** Sets the fixed width of the shimmer, in pixels. */
+        /**
+         * Sets the fixed width of the shimmer, in pixels.
+         */
         public T setFixedWidth(@Px int fixedWidth) {
             if (fixedWidth < 0) {
                 throw new IllegalArgumentException("Given invalid width: " + fixedWidth);
@@ -297,7 +318,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets the fixed height of the shimmer, in pixels. */
+        /**
+         * Sets the fixed height of the shimmer, in pixels.
+         */
         public T setFixedHeight(@Px int fixedHeight) {
             if (fixedHeight < 0) {
                 throw new IllegalArgumentException("Given invalid height: " + fixedHeight);
@@ -306,7 +329,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets the width ratio of the shimmer, multiplied against the total width of the layout. */
+        /**
+         * Sets the width ratio of the shimmer, multiplied against the total width of the layout.
+         */
         public T setWidthRatio(float widthRatio) {
             if (widthRatio < 0f) {
                 throw new IllegalArgumentException("Given invalid width ratio: " + widthRatio);
@@ -315,7 +340,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets the height ratio of the shimmer, multiplied against the total height of the layout. */
+        /**
+         * Sets the height ratio of the shimmer, multiplied against the total height of the layout.
+         */
         public T setHeightRatio(float heightRatio) {
             if (heightRatio < 0f) {
                 throw new IllegalArgumentException("Given invalid height ratio: " + heightRatio);
@@ -324,7 +351,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets the intensity of the shimmer. A larger value causes the shimmer to be larger. */
+        /**
+         * Sets the intensity of the shimmer. A larger value causes the shimmer to be larger.
+         */
         public T setIntensity(float intensity) {
             if (intensity < 0f) {
                 throw new IllegalArgumentException("Given invalid intensity value: " + intensity);
@@ -344,7 +373,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets the tilt angle of the shimmer in degrees. */
+        /**
+         * Sets the tilt angle of the shimmer in degrees.
+         */
         public T setTilt(float tilt) {
             mShimmer.tilt = tilt;
             return getThis();
@@ -360,7 +391,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets the shimmer alpha amount in the range [0, 1]. */
+        /**
+         * Sets the shimmer alpha amount in the range [0, 1].
+         */
         public T setHighlightAlpha(@FloatRange(from = 0, to = 1) float alpha) {
             int intAlpha = (int) (clamp(0f, 1f, alpha) * 255f);
             mShimmer.highlightColor = intAlpha << 24 | (mShimmer.highlightColor & 0x00FFFFFF);
@@ -376,7 +409,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets whether the shimmering animation will start automatically. */
+        /**
+         * Sets whether the shimmering animation will start automatically.
+         */
         public T setAutoStart(boolean status) {
             mShimmer.autoStart = status;
             return getThis();
@@ -400,7 +435,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets how long to wait in between repeats of the shimmering animation. */
+        /**
+         * Sets how long to wait in between repeats of the shimmering animation.
+         */
         public T setRepeatDelay(long millis) {
             if (millis < 0) {
                 throw new IllegalArgumentException("Given a negative repeat delay: " + millis);
@@ -409,7 +446,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets how long to wait for starting the shimmering animation. */
+        /**
+         * Sets how long to wait for starting the shimmering animation.
+         */
         public T setStartDelay(long millis) {
             if (millis < 0) {
                 throw new IllegalArgumentException("Given a negative start delay: " + millis);
@@ -418,7 +457,9 @@ public class Shimmer {
             return getThis();
         }
 
-        /** Sets how long the shimmering animation takes to do one full sweep. */
+        /**
+         * Sets how long the shimmering animation takes to do one full sweep.
+         */
         public T setDuration(long millis) {
             if (millis < 0) {
                 throw new IllegalArgumentException("Given a negative duration: " + millis);
@@ -431,10 +472,6 @@ public class Shimmer {
             mShimmer.updateColors();
             mShimmer.updatePositions();
             return mShimmer;
-        }
-
-        private static float clamp(float min, float max, float value) {
-            return Math.min(max, Math.max(min, value));
         }
     }
 
@@ -454,13 +491,17 @@ public class Shimmer {
             mShimmer.alphaShimmer = false;
         }
 
-        /** Sets the highlight color for the shimmer. */
+        /**
+         * Sets the highlight color for the shimmer.
+         */
         public ColorHighlightBuilder setHighlightColor(@ColorInt int color) {
             mShimmer.highlightColor = color;
             return getThis();
         }
 
-        /** Sets the base color for the shimmer. */
+        /**
+         * Sets the base color for the shimmer.
+         */
         public ColorHighlightBuilder setBaseColor(@ColorInt int color) {
             mShimmer.baseColor = (mShimmer.baseColor & 0xFF000000) | (color & 0x00FFFFFF);
             return getThis();

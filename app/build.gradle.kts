@@ -52,12 +52,12 @@ dependencies {
     val preference_version = "1.2.1"
     implementation("androidx.preference:preference:$preference_version")
 
-    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    implementation ("com.google.code.gson:gson:2.11.0")
-    implementation ("org.jsoup:jsoup:1.18.3")
-    implementation ("com.github.getActivity:MultiLanguages:9.3")
-    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("org.jsoup:jsoup:1.18.3")
+    implementation("com.github.getActivity:MultiLanguages:9.3")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation(platform("io.github.Rosemoe.sora-editor:bom:0.23.5"))

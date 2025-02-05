@@ -57,17 +57,10 @@ import java.util.TimeZone;
  * 'YYY' will be formatted as '2003', while it was '03' in former Java
  * versions. FastDateFormat implements the behavior of Java 7.</p>
  *
- * @since 2.0
  * @version $Id: FastDateFormat.java 1572877 2014-02-28 08:42:25Z britter $
+ * @since 2.0
  */
 public class FastDateFormat extends Format implements DateParser, DatePrinter {
-    /**
-     * Required for serialization support.
-     *
-     * @see java.io.Serializable
-     */
-    private static final long serialVersionUID = 2L;
-
     /**
      * FULL locale dependent date or time style.
      */
@@ -84,7 +77,12 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
      * SHORT locale dependent date or time style.
      */
     public static final int SHORT = DateFormat.SHORT;
-
+    /**
+     * Required for serialization support.
+     *
+     * @see java.io.Serializable
+     */
+    private static final long serialVersionUID = 2L;
     private static final FormatCache<FastDateFormat> cache = new FormatCache<FastDateFormat>() {
         @Override
         protected FastDateFormat createInstance(final String pattern, final TimeZone timeZone, final Locale locale) {
@@ -96,6 +94,32 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
     private final FastDateParser parser;
 
     //-----------------------------------------------------------------------
+
+    /**
+     * <p>Constructs a new FastDateFormat.</p>
+     *
+     * @param pattern  {@link java.text.SimpleDateFormat} compatible pattern
+     * @param timeZone non-null time zone to use
+     * @param locale   non-null locale to use
+     * @throws NullPointerException if pattern, timeZone, or locale is null.
+     */
+    protected FastDateFormat(final String pattern, final TimeZone timeZone, final Locale locale) {
+        this(pattern, timeZone, locale, null);
+    }
+
+    /**
+     * <p>Constructs a new FastDateFormat.</p>
+     *
+     * @param pattern      {@link java.text.SimpleDateFormat} compatible pattern
+     * @param timeZone     non-null time zone to use
+     * @param locale       non-null locale to use
+     * @param centuryStart The start of the 100 year period to use as the "default century" for 2 digit year parsing.  If centuryStart is null, defaults to now - 80 years
+     * @throws NullPointerException if pattern, timeZone, or locale is null.
+     */
+    protected FastDateFormat(final String pattern, final TimeZone timeZone, final Locale locale, final Date centuryStart) {
+        printer = new FastDatePrinter(pattern, timeZone, locale);
+        parser = new FastDateParser(pattern, timeZone, locale, centuryStart);
+    }
 
     /**
      * <p>Gets a formatter instance using the default pattern in the
@@ -135,6 +159,8 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
         return cache.getInstance(pattern, timeZone, null);
     }
 
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Gets a formatter instance using the specified pattern and
      * locale.</p>
@@ -166,8 +192,6 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
         return cache.getInstance(pattern, timeZone, locale);
     }
 
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Gets a date formatter instance using the specified style in the
      * default time zone and locale.</p>
@@ -196,6 +220,8 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
     public static FastDateFormat getDateInstance(final int style, final Locale locale) {
         return cache.getDateInstance(style, null, locale);
     }
+
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Gets a date formatter instance using the specified style and
@@ -229,8 +255,6 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
         return cache.getDateInstance(style, timeZone, locale);
     }
 
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Gets a time formatter instance using the specified style in the
      * default time zone and locale.</p>
@@ -259,6 +283,8 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
     public static FastDateFormat getTimeInstance(final int style, final Locale locale) {
         return cache.getTimeInstance(style, null, locale);
     }
+
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Gets a time formatter instance using the specified style and
@@ -292,8 +318,6 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
         return cache.getTimeInstance(style, timeZone, locale);
     }
 
-    //-----------------------------------------------------------------------
-
     /**
      * <p>Gets a date/time formatter instance using the specified style
      * in the default time zone and locale.</p>
@@ -325,6 +349,9 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
         return cache.getDateTimeInstance(dateStyle, timeStyle, null, locale);
     }
 
+    // Constructor
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Gets a date/time formatter instance using the specified style and
      * time zone in the default locale.</p>
@@ -342,6 +369,9 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
         return getDateTimeInstance(dateStyle, timeStyle, timeZone, null);
     }
 
+    // Constructor
+    //-----------------------------------------------------------------------
+
     /**
      * <p>Gets a date/time formatter instance using the specified style,
      * time zone and locale.</p>
@@ -358,38 +388,6 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
     public static FastDateFormat getDateTimeInstance(
             final int dateStyle, final int timeStyle, final TimeZone timeZone, final Locale locale) {
         return cache.getDateTimeInstance(dateStyle, timeStyle, timeZone, locale);
-    }
-
-    // Constructor
-    //-----------------------------------------------------------------------
-
-    /**
-     * <p>Constructs a new FastDateFormat.</p>
-     *
-     * @param pattern  {@link java.text.SimpleDateFormat} compatible pattern
-     * @param timeZone non-null time zone to use
-     * @param locale   non-null locale to use
-     * @throws NullPointerException if pattern, timeZone, or locale is null.
-     */
-    protected FastDateFormat(final String pattern, final TimeZone timeZone, final Locale locale) {
-        this(pattern, timeZone, locale, null);
-    }
-
-    // Constructor
-    //-----------------------------------------------------------------------
-
-    /**
-     * <p>Constructs a new FastDateFormat.</p>
-     *
-     * @param pattern      {@link java.text.SimpleDateFormat} compatible pattern
-     * @param timeZone     non-null time zone to use
-     * @param locale       non-null locale to use
-     * @param centuryStart The start of the 100 year period to use as the "default century" for 2 digit year parsing.  If centuryStart is null, defaults to now - 80 years
-     * @throws NullPointerException if pattern, timeZone, or locale is null.
-     */
-    protected FastDateFormat(final String pattern, final TimeZone timeZone, final Locale locale, final Date centuryStart) {
-        printer = new FastDatePrinter(pattern, timeZone, locale);
-        parser = new FastDateParser(pattern, timeZone, locale, centuryStart);
     }
 
     // Format methods

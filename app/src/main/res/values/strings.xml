@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="AppName">IPTV DRM Stream Player</string>
     <string name="AppNameBeta">DRM Stream Player</string>
     <string name="LanguageName">English</string>

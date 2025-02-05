@@ -19,12 +19,11 @@ import java.util.concurrent.CountDownLatch;
 public class DispatchQueue extends Thread {
 
     private static final int THREAD_PRIORITY_DEFAULT = -1000;
-
-    private volatile Handler handler = null;
-    private final CountDownLatch syncLatch = new CountDownLatch(1);
-    private long lastTaskTime;
     private static int indexPointer = 0;
     public final int index = indexPointer++;
+    private final CountDownLatch syncLatch = new CountDownLatch(1);
+    private volatile Handler handler = null;
+    private long lastTaskTime;
     private int threadPriority = THREAD_PRIORITY_DEFAULT;
 
     public DispatchQueue(final String threadName) {

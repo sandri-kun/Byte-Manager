@@ -1,8 +1,6 @@
 package org.bytedata.manager.ui.editor;
 
 import android.annotation.SuppressLint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.view.View;

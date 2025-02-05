@@ -148,6 +148,6 @@ public class SunDate {
         } else if (sunset > 60 * 24) {
             sunset += 60 * 24;
         }
-        return new int[] {sunrise, sunset};
+        return new int[]{sunrise, sunset};
     }
 }

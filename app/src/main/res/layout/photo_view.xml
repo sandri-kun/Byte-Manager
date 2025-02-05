@@ -1,107 +1,117 @@
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical">
-	<FrameLayout
-		android:id="@+id/frameLayout"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:orientation="vertical">
-		<LinearLayout
-			android:id="@+id/menu_bottom"
-			android:layout_width="match_parent"
-			android:layout_height="56dp"
-			android:background="#000000"
-			android:orientation="horizontal"
-			android:layout_gravity="center_horizontal|bottom"
-			android:elevation="4dp">
-			<androidx.appcompat.widget.AppCompatCheckBox
-				android:id="@+id/checkbox"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:layout_marginLeft="12dp"
-				android:padding="8dp"
-				android:gravity="center_horizontal|center_vertical"
-				android:textSize="16sp"
-				android:textStyle="bold"
-				android:textColor="#FFFFFF"
-				app:buttonTint="?colorAccent" />
-			<TextView
-				android:id="@+id/bottomTextView"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:padding="8dp"
-				android:gravity="center_horizontal|center_vertical"
-				android:text="1 / 23"
-				android:textSize="16sp"
-				android:textStyle="bold"
-				android:textColor="#FFFFFF"
-				android:layout_weight="1" />
-			<ImageView
-				android:id="@+id/imageview1"
-				android:layout_width="56dp"
-				android:layout_height="56dp"
-				android:padding="15dp"
-				android:src="@drawable/share_24dp"
-				android:scaleType="centerInside" />
-		</LinearLayout>
-		<LinearLayout
-			android:id="@+id/toolbar"
-			android:layout_width="match_parent"
-			android:layout_height="56dp"
-			android:background="#000000"
-			android:orientation="horizontal"
-			android:layout_gravity="center_horizontal|top"
-			android:elevation="4dp">
-			<ImageView
-				android:id="@+id/back"
-				android:layout_width="56dp"
-				android:layout_height="match_parent"
-				android:padding="12dp"
-				android:src="@drawable/arrow_back_24dp"
-				android:scaleType="centerInside" />
-			<LinearLayout
-				android:id="@+id/linear3"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:gravity="center_vertical"
-				android:orientation="vertical"
-				android:layout_weight="1">
-				<TextView
-					android:id="@+id/textView"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="IMG_20240115_140729_923.jpg"
-					android:textSize="18sp"
-					android:textStyle="bold"
-					android:textColor="#FFFFFF"
-					android:singleLine="true"
-					android:ellipsize="end" />
-				<TextView
-					android:id="@+id/valueTextView"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="1dp"
-					android:text="2024-05-01 (52x72)"
-					android:textSize="12sp"
-					android:textColor="#F5F5F5"
-					android:singleLine="true"
-					android:ellipsize="end" />
-			</LinearLayout>
-			<ImageView
-				android:id="@+id/swap"
-				android:layout_width="56dp"
-				android:layout_height="match_parent"
-				android:padding="14dp"
-				android:src="@drawable/swap_horiz_24dp"
-				android:scaleType="centerInside" />
-		</LinearLayout>
-		<androidx.viewpager2.widget.ViewPager2
-			android:id="@+id/viewPager"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent" />
-	</FrameLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/menu_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:background="#000000"
+            android:elevation="4dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="12dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:padding="8dp"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:buttonTint="?colorAccent" />
+
+            <TextView
+                android:id="@+id/bottomTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|center_vertical"
+                android:padding="8dp"
+                android:text="1 / 23"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageview1"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:padding="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/share_24dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="center_horizontal|top"
+            android:background="#000000"
+            android:elevation="4dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="56dp"
+                android:layout_height="match_parent"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/arrow_back_24dp" />
+
+            <LinearLayout
+                android:id="@+id/linear3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="IMG_20240115_140729_923.jpg"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/valueTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="2024-05-01 (52x72)"
+                    android:textColor="#F5F5F5"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/swap"
+                android:layout_width="56dp"
+                android:layout_height="match_parent"
+                android:padding="14dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/swap_horiz_24dp" />
+        </LinearLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 </LinearLayout>

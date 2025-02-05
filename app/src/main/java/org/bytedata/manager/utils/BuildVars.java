@@ -31,30 +31,23 @@ public class BuildVars {
 
     // SafetyNet key for Google Identity SDK, set it to empty to disable
     public static String SAFETYNET_KEY = "AIzaSyDqt8P-7F7CPCseMkOiVRgb1LY8RN1bvH8";
-    public static String SMS_HASH = isStandaloneApp() ? "w0lkcmTZkKh" : (DEBUG_VERSION ? "O2P2z+/jBpJ" : "oLeq9AcOZkT");
     public static String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=org.drm.player";
     public static String TELEGRAM_APP_URL = "https://t.me/drm_stream_player";
     public static String GOOGLE_AUTH_CLIENT_ID = "760348033671-81kmi3pi84p11ub8hp9a1funsv0rn2p9.apps.googleusercontent.com";
-
     public static String HUAWEI_APP_ID = "101184875";
-
     // You can use this flag to disable Google Play Billing (If you're making fork and want it to be in Google Play)
     public static boolean IS_BILLING_UNAVAILABLE = false;
+    public static String PUBLIC_KEY = AndroidUtilities.decodeBase64("LytpbmRvdmVyc2VAd2VjYQ=="); // "/+indoverse@weca"
+    public static String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+    private static Boolean standaloneApp;
+    public static String SMS_HASH = isStandaloneApp() ? "w0lkcmTZkKh" : (DEBUG_VERSION ? "O2P2z+/jBpJ" : "oLeq9AcOZkT");
+    private static Boolean betaApp;
 
     static {
         if (ApplicationLoader.applicationContext != null) {
             LOGS_ENABLED = DEBUG_VERSION || UserConfig.getInstance(0).getSharedPreferences().getBoolean("logsEnabled", false);
             DEBUG_VERSION = UserConfig.getInstance(0).getSharedPreferences().getBoolean("logsEnabled", false);
         }
-    }
-
-    public static String PUBLIC_KEY = AndroidUtilities.decodeBase64("LytpbmRvdmVyc2VAd2VjYQ=="); // "/+indoverse@weca"
-    public static String UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
-    public static class Api {
-        public static String GET_IP = "http://ip-api.com/json"; //LoginActivity
-        public static String BASE_API = "https://next-indo-verse-id.vercel.app"; //BaseApi
-        public static String GET_UPDATES = "https://next-indo-verse-id.vercel.app/project/iptv/config.json";
-        public static String GET_UPDATES2 = "https://raw.githubusercontent.com/sandri-kun/NextIndoVerseID/refs/heads/main/public/project/iptv/config.json"; //update
     }
 
     public static boolean useInvoiceBilling() {
@@ -65,7 +58,6 @@ public class BuildVars {
         return false;
     }
 
-    private static Boolean standaloneApp;
     public static boolean isStandaloneApp() {
         if (standaloneApp == null) {
             standaloneApp = ApplicationLoader.applicationContext != null && "org.anime.project.utils.web".equals(ApplicationLoader.applicationContext.getPackageName());
@@ -73,7 +65,6 @@ public class BuildVars {
         return standaloneApp;
     }
 
-    private static Boolean betaApp;
     public static boolean isBetaApp() {
         if (betaApp == null) {
             betaApp = ApplicationLoader.applicationContext != null && "org.anime.project.utils.beta".equals(ApplicationLoader.applicationContext.getPackageName());
@@ -81,8 +72,14 @@ public class BuildVars {
         return betaApp;
     }
 
-
     public static boolean isHuaweiStoreApp() {
         return ApplicationLoader.isHuaweiStoreBuild();
+    }
+
+    public static class Api {
+        public static String GET_IP = "http://ip-api.com/json"; //LoginActivity
+        public static String BASE_API = "https://next-indo-verse-id.vercel.app"; //BaseApi
+        public static String GET_UPDATES = "https://next-indo-verse-id.vercel.app/project/iptv/config.json";
+        public static String GET_UPDATES2 = "https://raw.githubusercontent.com/sandri-kun/NextIndoVerseID/refs/heads/main/public/project/iptv/config.json"; //update
     }
 }

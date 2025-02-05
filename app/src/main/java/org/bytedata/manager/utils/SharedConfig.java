@@ -9,17 +9,14 @@ import java.io.File;
 
 public class SharedConfig {
     private static final String TAG = "SharedConfig: ";
-
-    private static boolean configLoaded;
     private static final Object sync = new Object();
     private static final Object localIdSync = new Object();
-
     public static boolean noStatusBar = false;
     public static String storageCacheDir;
-
     public static TLRPC.TL_help_appUpdate pendingAppUpdate;
     public static int pendingAppUpdateBuildVersion;
     public static long lastUpdateCheckTime;
+    private static boolean configLoaded;
 
     public static void checkLogsToDelete() {
         if (!BuildVars.LOGS_ENABLED) {

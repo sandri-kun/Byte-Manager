@@ -80,13 +80,17 @@ import okio.Okio;
 public class ANRequest<T extends ANRequest> {
 
     private final static String TAG = ANRequest.class.getSimpleName();
-
+    private static final MediaType JSON_MEDIA_TYPE =
+            MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType MEDIA_TYPE_MARKDOWN =
+            MediaType.parse("text/x-markdown; charset=utf-8");
+    private static final Object sDecodeLock = new Object();
     private final int mMethod;
     private final Priority mPriority;
     private final int mRequestType;
     private final String mUrl;
-    private int sequenceNumber;
     private final Object mTag;
+    private int sequenceNumber;
     private ResponseType mResponseType;
     private HashMap<String, List<String>> mHeadersMap = new HashMap<>();
     private HashMap<String, String> mBodyParameterMap = new HashMap<>();
@@ -101,13 +105,7 @@ public class ANRequest<T extends ANRequest> {
     private String mStringBody = null;
     private byte[] mByte = null;
     private File mFile = null;
-    private static final MediaType JSON_MEDIA_TYPE =
-            MediaType.parse("application/json; charset=utf-8");
-    private static final MediaType MEDIA_TYPE_MARKDOWN =
-            MediaType.parse("text/x-markdown; charset=utf-8");
     private MediaType customMediaType = null;
-    private static final Object sDecodeLock = new Object();
-
     private Future future;
     private Call call;
     private int mProgress;
@@ -377,23 +375,13 @@ public class ANRequest<T extends ANRequest> {
         return SynchronousCall.execute(this);
     }
 
-    public T setDownloadProgressListener(DownloadProgressListener downloadProgressListener) {
-        this.mDownloadProgressListener = downloadProgressListener;
-        return (T) this;
-    }
-
-    public T setUploadProgressListener(UploadProgressListener uploadProgressListener) {
-        this.mUploadProgressListener = uploadProgressListener;
-        return (T) this;
+    public AnalyticsListener getAnalyticsListener() {
+        return mAnalyticsListener;
     }
 
     public T setAnalyticsListener(AnalyticsListener analyticsListener) {
         this.mAnalyticsListener = analyticsListener;
         return (T) this;
-    }
-
-    public AnalyticsListener getAnalyticsListener() {
-        return mAnalyticsListener;
     }
 
     public int getMethod() {
@@ -437,12 +425,12 @@ public class ANRequest<T extends ANRequest> {
         this.mProgress = progress;
     }
 
-    public void setResponseAs(ResponseType responseType) {
-        this.mResponseType = responseType;
-    }
-
     public ResponseType getResponseAs() {
         return mResponseType;
+    }
+
+    public void setResponseAs(ResponseType responseType) {
+        this.mResponseType = responseType;
     }
 
     public Object getTag() {
@@ -457,12 +445,12 @@ public class ANRequest<T extends ANRequest> {
         return mOkHttpClient;
     }
 
-    public void setUserAgent(String userAgent) {
-        this.mUserAgent = userAgent;
-    }
-
     public String getUserAgent() {
         return mUserAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.mUserAgent = userAgent;
     }
 
     public Type getType() {
@@ -482,6 +470,11 @@ public class ANRequest<T extends ANRequest> {
                 }
             }
         };
+    }
+
+    public T setDownloadProgressListener(DownloadProgressListener downloadProgressListener) {
+        this.mDownloadProgressListener = downloadProgressListener;
+        return (T) this;
     }
 
     public void updateDownloadCompletion() {
@@ -528,6 +521,11 @@ public class ANRequest<T extends ANRequest> {
                 }
             }
         };
+    }
+
+    public T setUploadProgressListener(UploadProgressListener uploadProgressListener) {
+        this.mUploadProgressListener = uploadProgressListener;
+        return (T) this;
     }
 
     public String getDirPath() {
@@ -861,7 +859,7 @@ public class ANRequest<T extends ANRequest> {
                     mediaType = MediaType.parse(stringBody.contentType);
                 }
                 builder.addPart(Headers.of("Content-Disposition",
-                        "form-data; name=\"" + entry.getKey() + "\""),
+                                "form-data; name=\"" + entry.getKey() + "\""),
                         RequestBody.create(mediaType, stringBody.value));
             }
             for (HashMap.Entry<String, List<MultipartFileBody>> entry : mMultiPartFileMap.entrySet()) {
@@ -876,7 +874,7 @@ public class ANRequest<T extends ANRequest> {
                     }
                     RequestBody requestBody = RequestBody.create(mediaType, fileBody.file);
                     builder.addPart(Headers.of("Content-Disposition",
-                            "form-data; name=\"" + entry.getKey() + "\"; filename=\"" + fileName + "\""),
+                                    "form-data; name=\"" + entry.getKey() + "\"; filename=\"" + fileName + "\""),
                             requestBody);
                 }
             }
@@ -907,6 +905,17 @@ public class ANRequest<T extends ANRequest> {
         return builder.build();
     }
 
+    @Override
+    public String toString() {
+        return "ANRequest{" +
+                "sequenceNumber='" + sequenceNumber +
+                ", mMethod=" + mMethod +
+                ", mPriority=" + mPriority +
+                ", mRequestType=" + mRequestType +
+                ", mUrl=" + mUrl +
+                '}';
+    }
+
     public static class HeadRequestBuilder extends GetRequestBuilder {
 
         public HeadRequestBuilder(String url) {
@@ -922,18 +931,18 @@ public class ANRequest<T extends ANRequest> {
     }
 
     public static class GetRequestBuilder<T extends GetRequestBuilder> implements RequestBuilder {
+        private final String mUrl;
+        private final HashMap<String, List<String>> mHeadersMap = new HashMap<>();
+        private final HashMap<String, List<String>> mQueryParameterMap = new HashMap<>();
+        private final HashMap<String, String> mPathParameterMap = new HashMap<>();
         private Priority mPriority = Priority.MEDIUM;
         private int mMethod = Method.GET;
-        private final String mUrl;
         private Object mTag;
         private Bitmap.Config mDecodeConfig;
         private BitmapFactory.Options mBitmapOptions;
         private int mMaxWidth;
         private int mMaxHeight;
         private ImageView.ScaleType mScaleType;
-        private final HashMap<String, List<String>> mHeadersMap = new HashMap<>();
-        private final HashMap<String, List<String>> mQueryParameterMap = new HashMap<>();
-        private final HashMap<String, String> mPathParameterMap = new HashMap<>();
         private CacheControl mCacheControl;
         private Executor mExecutor;
         private OkHttpClient mOkHttpClient;
@@ -1159,19 +1168,19 @@ public class ANRequest<T extends ANRequest> {
 
     public static class PostRequestBuilder<T extends PostRequestBuilder> implements RequestBuilder {
 
-        private Priority mPriority = Priority.MEDIUM;
-        private int mMethod = Method.POST;
         private final String mUrl;
-        private Object mTag;
-        private String mApplicationJsonString = null;
-        private String mStringBody = null;
-        private byte[] mByte = null;
-        private File mFile = null;
         private final HashMap<String, List<String>> mHeadersMap = new HashMap<>();
         private final HashMap<String, String> mBodyParameterMap = new HashMap<>();
         private final HashMap<String, String> mUrlEncodedFormBodyParameterMap = new HashMap<>();
         private final HashMap<String, List<String>> mQueryParameterMap = new HashMap<>();
         private final HashMap<String, String> mPathParameterMap = new HashMap<>();
+        private Priority mPriority = Priority.MEDIUM;
+        private int mMethod = Method.POST;
+        private Object mTag;
+        private String mApplicationJsonString = null;
+        private String mStringBody = null;
+        private byte[] mByte = null;
+        private File mFile = null;
         private CacheControl mCacheControl;
         private Executor mExecutor;
         private OkHttpClient mOkHttpClient;
@@ -1430,14 +1439,14 @@ public class ANRequest<T extends ANRequest> {
 
     public static class DownloadBuilder<T extends DownloadBuilder> implements RequestBuilder {
 
-        private Priority mPriority = Priority.MEDIUM;
         private final String mUrl;
-        private Object mTag;
         private final HashMap<String, List<String>> mHeadersMap = new HashMap<>();
         private final HashMap<String, List<String>> mQueryParameterMap = new HashMap<>();
         private final HashMap<String, String> mPathParameterMap = new HashMap<>();
         private final String mDirPath;
         private final String mFileName;
+        private Priority mPriority = Priority.MEDIUM;
+        private Object mTag;
         private CacheControl mCacheControl;
         private int mPercentageThresholdForCancelling = 0;
         private Executor mExecutor;
@@ -1612,14 +1621,14 @@ public class ANRequest<T extends ANRequest> {
 
     public static class MultiPartBuilder<T extends MultiPartBuilder> implements RequestBuilder {
 
-        private Priority mPriority = Priority.MEDIUM;
         private final String mUrl;
-        private Object mTag;
         private final HashMap<String, List<String>> mHeadersMap = new HashMap<>();
         private final HashMap<String, List<String>> mQueryParameterMap = new HashMap<>();
         private final HashMap<String, String> mPathParameterMap = new HashMap<>();
         private final HashMap<String, MultipartStringBody> mMultiPartParameterMap = new HashMap<>();
         private final HashMap<String, List<MultipartFileBody>> mMultiPartFileMap = new HashMap<>();
+        private Priority mPriority = Priority.MEDIUM;
+        private Object mTag;
         private CacheControl mCacheControl;
         private int mPercentageThresholdForCancelling = 0;
         private Executor mExecutor;
@@ -1902,16 +1911,5 @@ public class ANRequest<T extends ANRequest> {
         public ANRequest build() {
             return new ANRequest(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ANRequest{" +
-                "sequenceNumber='" + sequenceNumber +
-                ", mMethod=" + mMethod +
-                ", mPriority=" + mPriority +
-                ", mRequestType=" + mRequestType +
-                ", mUrl=" + mUrl +
-                '}';
     }
 }

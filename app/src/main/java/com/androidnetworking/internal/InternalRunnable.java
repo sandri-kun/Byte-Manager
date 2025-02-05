@@ -37,9 +37,9 @@ import okhttp3.Response;
  */
 public class InternalRunnable implements Runnable {
 
-    private final Priority priority;
     public final int sequence;
     public final ANRequest request;
+    private final Priority priority;
 
     public InternalRunnable(ANRequest request) {
         this.request = request;

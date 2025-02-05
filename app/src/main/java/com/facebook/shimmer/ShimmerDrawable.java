@@ -43,6 +43,10 @@ public final class ShimmerDrawable extends Drawable {
         mShimmerPaint.setAntiAlias(true);
     }
 
+    public @Nullable Shimmer getShimmer() {
+        return mShimmer;
+    }
+
     public void setShimmer(@Nullable Shimmer shimmer) {
         mShimmer = shimmer;
         if (mShimmer != null) {
@@ -55,30 +59,34 @@ public final class ShimmerDrawable extends Drawable {
         invalidateSelf();
     }
 
-    public @Nullable Shimmer getShimmer() {
-        return mShimmer;
-    }
-
-    /** Starts the shimmer animation. */
+    /**
+     * Starts the shimmer animation.
+     */
     public void startShimmer() {
         if (mValueAnimator != null && !isShimmerStarted() && getCallback() != null) {
             mValueAnimator.start();
         }
     }
 
-    /** Stops the shimmer animation. */
+    /**
+     * Stops the shimmer animation.
+     */
     public void stopShimmer() {
         if (mValueAnimator != null && isShimmerStarted()) {
             mValueAnimator.cancel();
         }
     }
 
-    /** Return whether the shimmer animation has been started. */
+    /**
+     * Return whether the shimmer animation has been started.
+     */
     public boolean isShimmerStarted() {
         return mValueAnimator != null && mValueAnimator.isStarted();
     }
 
-    /** Return whether the shimmer animation is running. */
+    /**
+     * Return whether the shimmer animation is running.
+     */
     public boolean isShimmerRunning() {
         return mValueAnimator != null && mValueAnimator.isRunning();
     }

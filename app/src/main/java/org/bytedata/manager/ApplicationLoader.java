@@ -39,24 +39,14 @@ import java.io.Writer;
 import java.time.LocalDate;
 import java.util.Locale;
 
-public class ApplicationLoader extends Application  {
+public class ApplicationLoader extends Application {
 
-    private static ApplicationLoader applicationLoaderInstance;
-
+    private static final int lastKnownNetworkType = -1;
     @SuppressLint("StaticFieldLeak")
     public static volatile Context applicationContext;
     public static volatile NetworkInfo currentNetworkInfo;
     public static volatile Handler applicationHandler;
-
-    private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
-    private static ConnectivityManager connectivityManager;
-    private static volatile boolean applicationInited = false;
-    private static volatile  ConnectivityManager.NetworkCallback networkCallback;
-    private static long lastNetworkCheckTypeTime;
-    private static final int lastKnownNetworkType = -1;
-
     public static long startTime;
-
     public static volatile boolean isScreenOn = false;
     public static volatile boolean mainInterfacePaused = true;
     public static volatile boolean mainInterfaceStopped = true;
@@ -64,21 +54,23 @@ public class ApplicationLoader extends Application  {
     public static volatile boolean mainInterfacePausedStageQueue = true;
     public static boolean canDrawOverlays;
     public static volatile long mainInterfacePausedStageQueueTime;
+    private static ApplicationLoader applicationLoaderInstance;
+    private static ConnectivityManager connectivityManager;
+    private static volatile boolean applicationInited = false;
+    private static volatile ConnectivityManager.NetworkCallback networkCallback;
+    private static long lastNetworkCheckTypeTime;
+    private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
+
+    public ApplicationLoader() {
+        super();
+    }
 
     public static String getApplicationId() {
         return applicationLoaderInstance.onGetApplicationId();
     }
 
-    protected String onGetApplicationId() {
-        return null;
-    }
-
     public static boolean isHuaweiStoreBuild() {
         return applicationLoaderInstance.isHuaweiBuild();
-    }
-
-    protected boolean isHuaweiBuild() {
-        return false;
     }
 
     public static File getFilesDirFixed() {
@@ -104,10 +96,6 @@ public class ApplicationLoader extends Application  {
             return;
         }
         applicationInited = true;
-    }
-
-    public ApplicationLoader() {
-        super();
     }
 
     public static boolean isExpired() {
@@ -138,6 +126,74 @@ public class ApplicationLoader extends Application  {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private static void ensureCurrentNetworkGet(boolean force) {
+
+    }
+
+    public static boolean isRoaming() {
+        try {
+            ensureCurrentNetworkGet(false);
+            return currentNetworkInfo != null && currentNetworkInfo.isRoaming();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return false;
+    }
+
+    public static boolean isConnectedOrConnectingToWiFi() {
+        try {
+            ensureCurrentNetworkGet(false);
+            if (currentNetworkInfo != null && (currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI || currentNetworkInfo.getType() == ConnectivityManager.TYPE_ETHERNET)) {
+                NetworkInfo.State state = currentNetworkInfo.getState();
+                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING || state == NetworkInfo.State.SUSPENDED) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return false;
+    }
+
+    public static boolean isConnectionSlow() {
+        try {
+            ensureCurrentNetworkGet(false);
+            if (currentNetworkInfo != null && currentNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                switch (currentNetworkInfo.getSubtype()) {
+                    case TelephonyManager.NETWORK_TYPE_1xRTT:
+                    case TelephonyManager.NETWORK_TYPE_CDMA:
+                    case TelephonyManager.NETWORK_TYPE_EDGE:
+                    case TelephonyManager.NETWORK_TYPE_GPRS:
+                    case TelephonyManager.NETWORK_TYPE_IDEN:
+                        return true;
+                }
+            }
+        } catch (Throwable ignore) {
+
+        }
+        return false;
+    }
+
+    public static void startAppCenter(Activity context) {
+        applicationLoaderInstance.startAppCenterInternal(context);
+    }
+
+    public static void checkForUpdates() {
+        applicationLoaderInstance.checkForUpdatesInternal();
+    }
+
+    public static void appCenterLog(Throwable e) {
+        applicationLoaderInstance.appCenterLogInternal(e);
+    }
+
+    protected String onGetApplicationId() {
+        return null;
+    }
+
+    protected boolean isHuaweiBuild() {
+        return false;
     }
 
     @Override
@@ -206,13 +262,13 @@ public class ApplicationLoader extends Application  {
         }
     }
 
-    private String getStackTrace(Throwable th){
+    private String getStackTrace(Throwable th) {
         final Writer result = new StringWriter();
 
         final PrintWriter printWriter = new PrintWriter(result);
         Throwable cause = th;
 
-        while(cause != null){
+        while (cause != null) {
             cause.printStackTrace(printWriter);
             cause = cause.getCause();
         }
@@ -227,69 +283,12 @@ public class ApplicationLoader extends Application  {
         super.onConfigurationChanged(newConfig);
     }
 
-    private static void ensureCurrentNetworkGet(boolean force) {
-
+    protected void appCenterLogInternal(Throwable e) {
     }
 
-    public static boolean isRoaming() {
-        try {
-            ensureCurrentNetworkGet(false);
-            return currentNetworkInfo != null && currentNetworkInfo.isRoaming();
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-        return false;
+    protected void checkForUpdatesInternal() {
     }
 
-    public static boolean isConnectedOrConnectingToWiFi() {
-        try {
-            ensureCurrentNetworkGet(false);
-            if (currentNetworkInfo != null && (currentNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI || currentNetworkInfo.getType() == ConnectivityManager.TYPE_ETHERNET)) {
-                NetworkInfo.State state = currentNetworkInfo.getState();
-                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING || state == NetworkInfo.State.SUSPENDED) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-        return false;
+    protected void startAppCenterInternal(Activity context) {
     }
-
-    public static boolean isConnectionSlow() {
-        try {
-            ensureCurrentNetworkGet(false);
-            if (currentNetworkInfo != null && currentNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                switch (currentNetworkInfo.getSubtype()) {
-                    case TelephonyManager.NETWORK_TYPE_1xRTT:
-                    case TelephonyManager.NETWORK_TYPE_CDMA:
-                    case TelephonyManager.NETWORK_TYPE_EDGE:
-                    case TelephonyManager.NETWORK_TYPE_GPRS:
-                    case TelephonyManager.NETWORK_TYPE_IDEN:
-                        return true;
-                }
-            }
-        } catch (Throwable ignore) {
-
-        }
-        return false;
-    }
-
-    public static void startAppCenter(Activity context) {
-        applicationLoaderInstance.startAppCenterInternal(context);
-    }
-
-    public static void checkForUpdates() {
-        applicationLoaderInstance.checkForUpdatesInternal();
-    }
-
-    public static void appCenterLog(Throwable e) {
-        applicationLoaderInstance.appCenterLogInternal(e);
-    }
-
-    protected void appCenterLogInternal(Throwable e) {}
-
-    protected void checkForUpdatesInternal() {}
-
-    protected void startAppCenterInternal(Activity context) {}
 }

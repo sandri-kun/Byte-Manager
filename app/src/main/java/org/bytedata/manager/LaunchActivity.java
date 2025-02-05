@@ -25,6 +25,7 @@ import com.google.android.material.color.MaterialColors;
 import com.hjq.language.MultiLanguages;
 
 import com.androidnetworking.AndroidNetworking;
+
 import org.bytedata.manager.databinding.ActivityMainBinding;
 import org.bytedata.manager.databinding.DrawerMainBinding;
 import org.bytedata.manager.ui.actionbar.BaseActivity;
@@ -36,7 +37,14 @@ import org.bytedata.manager.utils.SharedConfig;
 
 @SuppressLint("CustomSplashScreen")
 public class LaunchActivity extends BaseActivity<ActivityMainBinding> {
+    private static LaunchActivity staticInstanceForAlerts;
     private final String TAG = "LaunchActivity: ";
+
+    public static void checkFreeDiscSpaceStatic(final int force) {
+        if (staticInstanceForAlerts != null) {
+            staticInstanceForAlerts.checkFreeDiscSpace(force);
+        }
+    }
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -113,17 +121,10 @@ public class LaunchActivity extends BaseActivity<ActivityMainBinding> {
         }
     }
 
-    private static LaunchActivity staticInstanceForAlerts;
     private void checkFreeDiscSpace(final int force) {
         staticInstanceForAlerts = this;
         //AutoDeleteMediaTask.run();
         SharedConfig.checkLogsToDelete();
-    }
-
-    public static void checkFreeDiscSpaceStatic(final int force) {
-        if (staticInstanceForAlerts != null) {
-            staticInstanceForAlerts.checkFreeDiscSpace(force);
-        }
     }
 
     @Override

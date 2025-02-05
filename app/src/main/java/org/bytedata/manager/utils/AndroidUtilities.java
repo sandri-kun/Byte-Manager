@@ -83,24 +83,29 @@ public class AndroidUtilities {
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";
     public final static String TYPEFACE_MERRIWEATHER_BOLD = "fonts/mw_bold.ttf";
     public final static String TYPEFACE_COURIER_NEW_BOLD = "fonts/courier_new_bold.ttf";
-
+    public static final RectF rectTmp = new RectF();
+    public static final Rect rectTmp2 = new Rect();
+    public static final int FLAG_TAG_BR = 1;
+    public static final int FLAG_TAG_BOLD = 2;
+    public static final int FLAG_TAG_COLOR = 4;
+    public static final int FLAG_TAG_URL = 8;
+    public static final int FLAG_TAG_ALL = FLAG_TAG_BR | FLAG_TAG_BOLD | FLAG_TAG_URL;
+    private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();
     public static DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
     public static AccelerateInterpolator accelerateInterpolator = new AccelerateInterpolator();
     public static OvershootInterpolator overshootInterpolator = new OvershootInterpolator();
-
-    public static final RectF rectTmp = new RectF();
-    public static final Rect rectTmp2 = new Rect();
-
     public static float density = 1;
     public static Point displaySize = new Point();
     public static DisplayMetrics displayMetrics = new DisplayMetrics();
     public static boolean usingHardwareInput;
-
     public static int statusBarHeight = 0;
     public static int navigationBarHeight = 0;
-
     private static AccessibilityManager accessibilityManager;
     private static Vibrator vibrator;
+    //More
+    private static android.widget.Toast toast;
+    private static HashMap<Window, ValueAnimator> navigationBarColorAnimators;
+    private static Boolean isTablet = null, wasTablet = null, isSmallScreen = null;
 
     public static Vibrator getVibrator() {
         if (vibrator == null) {
@@ -113,18 +118,22 @@ public class AndroidUtilities {
         try {
             if (view == null || view.getContext() == null) return;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
-            if (!((Vibrator) view.getContext().getSystemService(Context.VIBRATOR_SERVICE)).hasAmplitudeControl()) return;
+            if (!((Vibrator) view.getContext().getSystemService(Context.VIBRATOR_SERVICE)).hasAmplitudeControl())
+                return;
             view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 
     public static void vibrate(View view) {
         try {
             if (view == null || view.getContext() == null) return;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
-            if (!((Vibrator) view.getContext().getSystemService(Context.VIBRATOR_SERVICE)).hasAmplitudeControl()) return;
+            if (!((Vibrator) view.getContext().getSystemService(Context.VIBRATOR_SERVICE)).hasAmplitudeControl())
+                return;
             view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 
     public static boolean isAccessibilityTouchExplorationEnabled() {
@@ -193,7 +202,7 @@ public class AndroidUtilities {
             }
             FileLog.e("tmessages " + "display size = " + displaySize.x + " " + displaySize.y + " " + displayMetrics.xdpi + "x" + displayMetrics.ydpi);
         } catch (Exception e) {
-            FileLog.e("tmessages "+ e);
+            FileLog.e("tmessages " + e);
 
         }
     }
@@ -353,7 +362,6 @@ public class AndroidUtilities {
         }
     }
 
-    private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();
     public static Typeface getTypeface(String assetPath) {
         synchronized (typefaceCache) {
             if (!typefaceCache.containsKey(assetPath)) {
@@ -383,8 +391,6 @@ public class AndroidUtilities {
         }
     }
 
-    //More
-    private static android.widget.Toast toast;
     public static void showToast(String text) {
         if (toast == null) {
             toast = android.widget.Toast.makeText(ApplicationLoader.applicationContext, text, android.widget.Toast.LENGTH_SHORT);
@@ -424,7 +430,7 @@ public class AndroidUtilities {
             byte[] bArr = new byte[((int) randomAccessFile.length())];
             randomAccessFile.readFully(bArr);
             return new String(instance.doFinal(bArr));
-        } catch(Exception e) {
+        } catch (Exception e) {
             FileLog.e(e);
         }
         return null;
@@ -442,7 +448,7 @@ public class AndroidUtilities {
             java.io.RandomAccessFile randomAccessFile = new java.io.RandomAccessFile(storage, "rw");
             randomAccessFile.setLength(0);
             randomAccessFile.write(doFinal);
-        } catch(Exception e) {
+        } catch (Exception e) {
             FileLog.e(e);
         }
     }
@@ -635,7 +641,7 @@ public class AndroidUtilities {
         return size;
     }
 
-    public static long getDirSize(File dir){
+    public static long getDirSize(File dir) {
         long size = 0;
         for (File file : dir.listFiles()) {
             if (file != null && file.isDirectory()) {
@@ -762,12 +768,6 @@ public class AndroidUtilities {
         }
     }
 
-    private static HashMap<Window, ValueAnimator> navigationBarColorAnimators;
-
-    public interface IntColorCallback {
-        void run(int color);
-    }
-
     public static void setNavigationBarColor(Window window, int color) {
         setNavigationBarColor(window, color, true);
     }
@@ -851,7 +851,6 @@ public class AndroidUtilities {
         ApplicationLoader.applicationHandler.removeCallbacks(runnable);
     }
 
-    private static Boolean isTablet = null, wasTablet = null, isSmallScreen = null;
     public static boolean isTabletForce() {
         return ApplicationLoader.applicationContext != null && ApplicationLoader.applicationContext.getResources().getBoolean(R.bool.isTablet);
     }
@@ -963,22 +962,6 @@ public class AndroidUtilities {
         }
     }
 
-    public static class LinkMovementMethodMy extends LinkMovementMethod {
-        @Override
-        public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
-            try {
-                boolean result = super.onTouchEvent(widget, buffer, event);
-                if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                    Selection.removeSelection(buffer);
-                }
-                return result;
-            } catch (Exception e) {
-                FileLog.e(e);
-            }
-            return false;
-        }
-    }
-
     public static void setTouchAnimForView(final View view, final long animDuration) {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -1024,12 +1007,6 @@ public class AndroidUtilities {
         });
         view.setClipToOutline(true);
     }
-
-    public static final int FLAG_TAG_BR = 1;
-    public static final int FLAG_TAG_BOLD = 2;
-    public static final int FLAG_TAG_COLOR = 4;
-    public static final int FLAG_TAG_URL = 8;
-    public static final int FLAG_TAG_ALL = FLAG_TAG_BR | FLAG_TAG_BOLD | FLAG_TAG_URL;
 
     public static SpannableStringBuilder replaceTags(String str) {
         return replaceTags(str, FLAG_TAG_ALL);
@@ -1436,7 +1413,7 @@ public class AndroidUtilities {
     }
 
     public static int getDefault2SpanCount(Context context) {
-        DisplayMetrics displayMetrics =context.getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
 
         if (screenWidthDp <= 360) {
@@ -1451,7 +1428,7 @@ public class AndroidUtilities {
     }
 
     public static int getDefault1SpanCount(Context context) {
-        DisplayMetrics displayMetrics =context.getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
 
         if (screenWidthDp <= 580) {
@@ -1462,6 +1439,26 @@ public class AndroidUtilities {
             return 3; // Large screens (tablet besar atau Chromebook kecil)
         } else {
             return 4; // Extra large screens (monitor besar atau layar ultra-wide)
+        }
+    }
+
+    public interface IntColorCallback {
+        void run(int color);
+    }
+
+    public static class LinkMovementMethodMy extends LinkMovementMethod {
+        @Override
+        public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
+            try {
+                boolean result = super.onTouchEvent(widget, buffer, event);
+                if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    Selection.removeSelection(buffer);
+                }
+                return result;
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+            return false;
         }
     }
 }
